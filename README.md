@@ -3,9 +3,31 @@
 
 This engine is still currently unusable.
 
+# Todo
+• fix rect collision
+
+• implement triangle collision
+
+• implement circle collision
+
+• implement convex collision
+
+• apply impulse with moment of inertia
+
+• apply friction 
+
+• implement collision pipeline 
+
+• add broadphase collision stage
+
+• add narrowphase collision stage
+
 
 # Future plans
 • better SIMD support
-• stable 2d simulation
+
+• stable 2D simulation
+
 • C++/Rust interface
-• 3d support
+
+• 3D support
