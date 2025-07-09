@@ -1,0 +1,11 @@
+
+# Cubevec Engine Core 0.0.1
+
+• simple math implemented
+
+• simple structure implemented
+
+• body 2d pool implemented
+
+
+
