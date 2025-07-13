@@ -27,10 +27,10 @@ extern "C" {
  if the size of unsigned int and float is not equal, just change 
  the unsigned int 
 */
-typedef float        CVE_Float;
-typedef unsigned int CVE_Uint;
-typedef size_t       CVE_Size;
-typedef void*        CVE_Handle;
+typedef float         CVE_Float;
+typedef unsigned int  CVE_Uint;
+typedef unsigned long CVE_Size;
+typedef void*         CVE_Handle;
 
 
 
@@ -87,16 +87,20 @@ typedef struct {
 	CVE_Float pre_rotate;
 	CVE_Float pre_scale[2];
 	CVE_Float density;
+	CVE_Float restitution;
 	CVE_Float width, height;
+	CVE_Float friction;
 } CVE_CreateRectBody2D;
 
 typedef struct {
 	CVE_Uint  movement_type;
 	CVE_Float pre_translate[2];
 	CVE_Float pre_rotate;
-	CVE_Float pre_scale[2];
+	CVE_Float pre_scale;
 	CVE_Float density;
+	CVE_Float restitution;
 	CVE_Float radius;
+	CVE_Float friction;
 } CVE_CreateCircleBody2D;
 
 typedef struct {
@@ -105,7 +109,9 @@ typedef struct {
 	CVE_Float pre_rotate;
 	CVE_Float pre_scale[2];
 	CVE_Float density;
+	CVE_Float restitution;
 	CVE_Float vertices[6];
+	CVE_Float friction;
 } CVE_CreateTriangleBody2D;
 
 typedef struct {
@@ -114,15 +120,14 @@ typedef struct {
 	CVE_Float pre_rotate;
 	CVE_Float pre_scale[2];
 	CVE_Float density;
+	CVE_Float restitution;
 	CVE_Float *vertices;
 	CVE_Size  vertices_size;
+	CVE_Float friction;
 } CVE_CreateConvexBody2D;
 
-typedef struct {
-	CVE_Handle body_handle;
-	CVE_Handle chunk_handle;
-} CVE_BodyHandle2D;
 
+typedef CVE_Handle CVE_BodyHandle2D;
 typedef CVE_Handle CVE_World2D;
 typedef CVE_Handle CVE_CollisionPipeline2D;
 typedef CVE_Handle CVE_BodyPool2D;
@@ -147,6 +152,19 @@ void cveSetEpsilonWorld2D(CVE_World2D world, CVE_Float epsilon);
 
 void cveAddBodyWorld2D(CVE_World2D world, CVE_BodyHandle2D* handle, CVE_Uint type, CVE_Handle ptr);
 void cveRemoveBodyWorld2D(CVE_World2D world, CVE_BodyHandle2D handle);
+
+
+/*********************************************
+ *
+ *               BODY2D FUNCTIONS
+ *
+ *********************************************/
+
+void cveGetPositionBody2D(CVE_BodyHandle2D body_handle, CVE_Handle out_ptr);
+void cveSetPositionBody2D(CVE_BodyHandle2D body_handle, CVE_Handle in_ptr);
+void cveGetRotationBody2D(CVE_BodyHandle2D body_handle, CVE_Handle out_ptr);
+void cveSetRotationBody2D(CVE_BodyHandle2D body_handle, CVE_Handle in_ptr);
+
 
 #ifdef __cplusplus
 }
