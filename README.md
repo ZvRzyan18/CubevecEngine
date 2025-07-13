@@ -3,7 +3,7 @@
 
 This engine is still currently unusable.
 
-# version 0.0.1
+# version 0.0.2
  see update_log.txt
 # Todo
 • fix rect collision
