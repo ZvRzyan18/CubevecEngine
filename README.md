@@ -1,5 +1,5 @@
 # CubevecEngine
-2D physics engine in C
+2D/3D physics engine in C
 
 This engine is still currently unstable.
 
@@ -8,17 +8,10 @@ This engine is still currently unstable.
 # version 0.0.2
  see update_log.txt
 # Todo
-• fix rect collision
 
 • implement triangle collision
 
-• implement circle collision
-
 • implement convex collision
-
-• apply impulse with moment of inertia
-
-• apply friction 
 
 • implement collision pipeline 
 
@@ -26,6 +19,7 @@ This engine is still currently unstable.
 
 • add narrowphase collision stage
 
+• add support for fixed joint
 
 # Future plans
 • better SIMD support
