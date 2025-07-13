@@ -3,8 +3,8 @@
  under MIT License.
 */
 
-#ifndef QX_ROUND_H
-#define QX_ROUND_H
+#ifndef CVE_ROUND_H
+#define CVE_ROUND_H
 
 #include "cubevec/math/vector.h"
 #include "cubevec/math/vector_operator.h"

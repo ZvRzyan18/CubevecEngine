@@ -3,8 +3,8 @@
  under MIT License.
 */
 
-#ifndef QX_GEOMTERY_H
-#define QX_GEOMTERY_H
+#ifndef CVE_GEOMTERY_H
+#define CVE_GEOMTERY_H
 
 #include "cubevec/math/vector.h"
 #include "cubevec/math/vector_operator.h"

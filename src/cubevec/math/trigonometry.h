@@ -3,15 +3,15 @@
  under MIT License.
 */
 
-#ifndef QX_TRIGONOMETRY_H
-#define QX_TRIGONOMETRY_H
+#ifndef CVE_TRIGONOMETRY_H
+#define CVE_TRIGONOMETRY_H
 
 #include "cubevec/math/vector.h"
 #include "cubevec/math/vector_operator.h"
 #include "cubevec/math/common.h"
 #include "cubevec/math/round.h"
 
-
+#include <math.h>
 /*********************************************
  *
  *               TRIGONOMETRY
@@ -37,6 +37,11 @@
 /*
  scalar
 */
+#define CVE_SinCos(rad, a, b) \
+        do { \
+         a = sinf(rad); \
+         b = cosf(rad); \
+        } while(0)
 /*
 QX_FORCE_INLINE QX_Float QX_Sin(QX_Float x) {
  //this function is approximated using this formula : (sin(sqrt(x))-sqrt(x)) / (x * sqrt(x))

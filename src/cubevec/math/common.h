@@ -3,8 +3,8 @@
  under MIT License.
 */
 
-#ifndef QX_COMMON_H
-#define QX_COMMON_H
+#ifndef CVE_COMMON_H
+#define CVE_COMMON_H
 
 #include "cubevec/math/vector_operator.h"
 #include "cubevec/cpu/arm64.h"
@@ -24,7 +24,7 @@
 #define CVE_EPSILON_FLOAT 1e-3
 
 
-#define CVE_PI 3.1415926
+#define CVE_PI_FLOAT 3.1415926
 
 /*
  these macros sould use SIMD instructions to
@@ -44,69 +44,69 @@
 
 
 #if defined(CVE_CPU_ARM64)
-#define CVE_Abs(out, x) \
+#define CVE_Abs(out, a) \
         do { \
          __asm__ volatile( \
          "fabs %s0, %s1 \n" \
          : "=w"(out) \
-         : "w"(x) \
+         : "w"(a) \
          ); \
         } while(0)
 #else
-#define CVE_Abs(out, x) \
-        out = x < 0.0 ? -x : x
+#define CVE_Abs(out, a) \
+        out = (a < 0.0) ? -a : a
 #endif
 
 
 #if defined(CVE_CPU_ARM64)
-#define CVE_Abs2f(out, x) \
+#define CVE_Abs2f(out, a) \
         do { \
          float32x2_t CVE_Abs2f_x; \
-         CVE_Neon_FromVec2f(CVE_Abs2f_x, x); \
+         CVE_Neon_FromVec2f(CVE_Abs2f_x, a); \
          CVE_Abs2f_x = vabs_f32(CVE_Abs2f_x); \
          CVE_Neon_ToVec2f(out, CVE_Abs2f_x); \
         } while(0)
 #else
-#define CVE_Abs2f(out, x) \
+#define CVE_Abs2f(out, a) \
         do { \
-        out.x = x.x < 0.0 ? -x.x : x.x; \
-        out.y = x.y < 0.0 ? -x.y : x.y; \
+        out.x = a.x < 0.0 ? -a.x : a.x; \
+        out.y = a.y < 0.0 ? -a.y : a.y; \
         } while(0)
 #endif 
 
 #if defined(CVE_CPU_ARM64)
-#define CVE_Abs3f(out, x) \
+#define CVE_Abs3f(out, a) \
         do { \
          float32x4_t CVE_Abs3f_x; \
-         CVE_Neon_FromVec3f(CVE_Abs3f_x, x); \
+         CVE_Neon_FromVec3f(CVE_Abs3f_x, a); \
          CVE_Abs3f_x = vabsq_f32(CVE_Abs3f_x); \
          CVE_Neon_ToVec3f(out, CVE_Abs3f_x); \
         } while(0)
 #else
-#define CVE_Abs3f(out, x) \
+#define CVE_Abs3f(out, a) \
         do { \
-        out.x = x.x < 0.0 ? -x.x : x.x; \
-        out.y = x.y < 0.0 ? -x.y : x.y; \
-        out.z = x.z < 0.0 ? -x.z : x.z; \
+        out.x = a.x < 0.0 ? -a.x : a.x; \
+        out.y = a.y < 0.0 ? -a.y : a.y; \
+        out.z = a.z < 0.0 ? -a.z : a.z; \
         } while(0)
 #endif
 
 
 #if defined(CVE_CPU_ARM64)
-#define CVE_Abs4f(out, x) \
+#define CVE_Abs4f(out, a) \
         do { \
          float32x4_t CVE_Abs4f_x; \
-         CVE_Neon_FromVec4f(CVE_Abs4f_x, x); \
+         CVE_Neon_FromVec4f(CVE_Abs4f_x, a); \
          CVE_Abs4f_x = vabsq_f32(CVE_Abs4f_x); \
          CVE_Neon_ToVec4f(out, CVE_Abs4f_x); \
         } while(0)
 #else
 #define CVE_Abs4f(out, x) \
         do { \
-        out.x = x.x < 0.0 ? -x.x : x.x; \
-        out.y = x.y < 0.0 ? -x.y : x.y; \
-        out.z = x.z < 0.0 ? -x.z : x.z; \
-        out.z = x.w < 0.0 ? -x.w : x.w; \
+        out.x = a.x < 0.0 ? -a.x : a.x; \
+        out.y = a.y < 0.0 ? -a.y : a.y; \
+        out.z = a.z < 0.0 ? -a.z : a.z; \
+        out.z = a.w < 0.0 ? -a.w : a.w; \
         } while(0)
 #endif
 
@@ -277,6 +277,10 @@
          CVE_LessThan2f(out, a, CVE_ApproxEquals2f_epsilon); \
         } while(0)
 
+
+
+#define CVE_Cross2f(out, a, b) \
+         out = (a.x * b.y - a.y * b.x)
 
 #endif
 

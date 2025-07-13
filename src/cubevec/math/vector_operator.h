@@ -76,34 +76,34 @@
 
 
 #if defined(CVE_CPU_ARM64)
-#define CVE_ScalarToVector2f(out, x) \
+#define CVE_ScalarToVector2f(out, a) \
         do { \
-         float32x2_t CVE_ScalarToVector2f_mx = vdup_n_f32(x); \
+         float32x2_t CVE_ScalarToVector2f_mx = vdup_n_f32(a); \
          CVE_Neon_ToVec2f(out, CVE_ScalarToVector2f_mx); \
         } while(0)
 #else
-#define CVE_ScalarToVector2f(out, x) \
+#define CVE_ScalarToVector2f(out, a) \
         do { \
-         out.x = x; \
-         out.y = x; \
+         out.x = a; \
+         out.y = a; \
         } while(0)
 #endif
 
 
 
 #if defined(CVE_CPU_ARM64)
-#define CVE_Negate2f(out, x) \
+#define CVE_Negate2f(out, a) \
         do { \
          float32x2_t CVE_Negate2f_mx; \
-         CVE_Neon_FromVec2f(CVE_Negate2f_mx, x); \
+         CVE_Neon_FromVec2f(CVE_Negate2f_mx, a); \
          CVE_Negate2f_mx = vneg_f32(CVE_Negate2f_mx); \
          CVE_Neon_ToVec2f(out, CVE_Negate2f_mx); \
         } while(0)
 #else
-#define CVE_Negate2f(out, x) \
+#define CVE_Negate2f(out, a) \
         do { \
-         out.x = -x.x; \
-         out.y = -x.y; \
+         out.x = -a.x; \
+         out.y = -a.y; \
         } while(0)         
 #endif
 
@@ -183,16 +183,16 @@
 
 
 #if defined(CVE_CPU_ARM64)
-#define CVE_ScalarToVector2u(out, x) \
+#define CVE_ScalarToVector2u(out, a) \
         do { \
-         uint32x2_t CVE_ScalarToVector2u_mx = vdup_n_u32(x); \
+         uint32x2_t CVE_ScalarToVector2u_mx = vdup_n_u32(a); \
          CVE_Neon_ToVec2u(out, CVE_ScalarToVector2u_mx); \
         } while(0)
 #else
-#define CVE_ScalarToVector2u(out, x) \
+#define CVE_ScalarToVector2u(out, a) \
         do { \
-         out.x = x; \
-         out.y = x; \
+         out.x = a; \
+         out.y = a; \
         } while(0)
 #endif
 
@@ -265,34 +265,34 @@
 
 
 #if defined(CVE_CPU_ARM64)
-#define CVE_ScalarToVector3f(out, x) \
+#define CVE_ScalarToVector3f(out, a) \
         do { \
-         float32x4_t CVE_ScalarToVector3f_mx = vdupq_n_f32(x); \
+         float32x4_t CVE_ScalarToVector3f_mx = vdupq_n_f32(a); \
          CVE_Neon_ToVec3f(out, CVE_ScalarToVector3f_mx); \
         } while(0)
 #else
-#define CVE_ScalarToVector3f(out, x) \
+#define CVE_ScalarToVector3f(out, a) \
         do { \
-         out.x = x; \
-         out.y = x; \
-         out.z = x; \
+         out.x = a; \
+         out.y = a; \
+         out.z = a; \
         } while(0)
 #endif
 
 #if defined(CVE_CPU_ARM64)
-#define CVE_Negate3f(out, x) \
+#define CVE_Negate3f(out, a) \
         do { \
          float32x4_t CVE_Negate3f_mx; \
-         CVE_Neon_FromVec3f(CVE_Negate3f_mx, x); \
+         CVE_Neon_FromVec3f(CVE_Negate3f_mx, a); \
          CVE_Negate3f_mx = vnegq_f32(CVE_Negate3f_mx); \
          CVE_Neon_ToVec3f(out, CVE_Negate3f_mx); \
         } while(0)
 #else
 #define CVE_Negate3f(out, x) \
         do { \
-         out.x = -x.x; \
-         out.y = -x.y; \
-         out.z = -x.z; \
+         out.x = -a.x; \
+         out.y = -a.y; \
+         out.z = -a.z; \
         } while(0)
 #endif
 
@@ -374,17 +374,17 @@
 
 
 #if defined(CVE_CPU_ARM64)
-#define CVE_ScalarToVector3u(out, x) \
+#define CVE_ScalarToVector3u(out, a) \
         do { \
-         uint32x4_t CVE_ScalarToVector3u_mx = vdupq_n_u32(x); \
+         uint32x4_t CVE_ScalarToVector3u_mx = vdupq_n_u32(a); \
          CVE_Neon_ToVec3u(out, CVE_ScalarToVector3u_mx); \
         } while(0)
 #else
-#define CVE_ScalarToVector3u(out, x) \
+#define CVE_ScalarToVector3u(out, a) \
         do { \
-         out.x = x; \
-         out.y = x; \
-         out.z = x; \
+         out.x = a; \
+         out.y = a; \
+         out.z = a; \
         } while(0)
 #endif
 
@@ -435,7 +435,7 @@
          CVE_Neon_ToVec3u(out, CVE_Mul3u_ma); \
         } while(0)
 #else
-#define CVE_Sub3u(out, a, b) \
+#define CVE_Mul3u(out, a, b) \
         do { \
          out.x = a.x * b.x; \
          out.y = a.y * b.y; \
@@ -459,36 +459,36 @@
 
 
 #if defined(CVE_CPU_ARM64)
-#define CVE_ScalarToVector4f(out, x) \
+#define CVE_ScalarToVector4f(out, a) \
         do { \
-         float32x4_t CVE_ScalarToVector4f_mx = vdupq_n_f32(x); \
+         float32x4_t CVE_ScalarToVector4f_mx = vdupq_n_f32(a); \
          CVE_Neon_ToVec4f(out, CVE_ScalarToVector4f_mx); \
         } while(0)
 #else
-#define CVE_ScalarToVector4f(out, x) \
+#define CVE_ScalarToVector4f(out, a) \
         do { \
-         out.x = x; \
-         out.y = x; \
-         out.z = x; \
-         out.w = x; \
+         out.x = a; \
+         out.y = a; \
+         out.z = a; \
+         out.w = a; \
         } while(0)
 #endif
 
 #if defined(CVE_CPU_ARM64)
-#define CVE_Negate4f(out, x) \
+#define CVE_Negate4f(out, a) \
         do { \
          float32x4_t CVE_Negate4f_mx; \
-         CVE_Neon_FromVec4f(CVE_Negate4f_mx, x); \
+         CVE_Neon_FromVec4f(CVE_Negate4f_mx, a); \
          CVE_Negate4f_mx = vnegq_f32(CVE_Negate4f_mx); \
          CVE_Neon_ToVec4f(out, CVE_Negate4f_mx); \
         } while(0)
 #else
-#define CVE_Negate4f(out, x) \
+#define CVE_Negate4f(out, a) \
         do { \
-         out.x = -x.x; \
-         out.y = -x.y; \
-         out.z = -x.z; \
-         out.w = -x.w; \
+         out.x = -a.x; \
+         out.y = -a.y; \
+         out.z = -a.z; \
+         out.w = -a.w; \
         } while(0)
 #endif
 
@@ -573,18 +573,18 @@
 
 
 #if defined(CVE_CPU_ARM64)
-#define CVE_ScalarToVector4u(out, x) \
+#define CVE_ScalarToVector4u(out, a) \
         do { \
-         uint32x4_t CVE_ScalarToVector4u_mx = vdupq_n_u32(x); \
+         uint32x4_t CVE_ScalarToVector4u_mx = vdupq_n_u32(a); \
          CVE_Neon_ToVec4u(out, CVE_ScalarToVector4u_mx); \
         } while(0)
 #else
-#define CVE_ScalarToVector3u(out, x) \
+#define CVE_ScalarToVector4u(out, a) \
         do { \
-         out.x = x; \
-         out.y = x; \
-         out.z = x; \
-         out.w = x; \
+         out.x = a; \
+         out.y = a; \
+         out.z = a; \
+         out.w = a; \
         } while(0)
 #endif
 
@@ -618,7 +618,7 @@
          CVE_Neon_ToVec4u(out, CVE_Sub4u_ma); \
         } while(0)
 #else
-#define CVE_Add4u(out, a, b) \
+#define CVE_Sub4u(out, a, b) \
         do { \
          out.x = a.x - b.x; \
          out.y = a.y - b.y; \

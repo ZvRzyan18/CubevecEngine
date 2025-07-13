@@ -3,8 +3,8 @@
  under MIT License.
 */
 
-#ifndef QX_ROOTS_H
-#define QX_ROOTS_H
+#ifndef CVE_ROOTS_H
+#define CVE_ROOTS_H
 
 #include "cubevec/math/vector.h"
 #include "cubevec/math/vector_operator.h"
