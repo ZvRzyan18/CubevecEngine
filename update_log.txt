@@ -1,3 +1,13 @@
+# Cubevec Engine Core 0.0.2
+
+• fixed some math error
+
+• handle impulse position
+
+• handle impulse rotation with moment of inertia
+
+• handle impulse with friction
+
 
 # Cubevec Engine Core 0.0.1
 
@@ -6,6 +16,5 @@
 • simple structure implemented
 
 • body 2d pool implemented
-
 
 
