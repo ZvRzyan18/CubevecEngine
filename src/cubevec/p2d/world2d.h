@@ -24,6 +24,10 @@ typedef struct {
 	
 	CVE_BodyPool2D_Internal body_pool;
 	CVE_Handle* collision_pipeline;
+	
+	CVE_Body2D *body_begin;
+	CVE_Body2D *body_end;
+	CVE_Size   body_size;
 } CVE_World2D_Internal;
 
 #endif

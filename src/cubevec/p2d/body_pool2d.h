@@ -68,12 +68,6 @@ void __cve_deallocate_to_body_pool2d(CVE_BodyPool2D_Internal* body_pool, CVE_Bod
 void __cve_destroy_body_pool2d(CVE_BodyPool2D_Internal* body_pool);
 
 
-/*
- invoke all update functions of bodies
-*/
-void __cve_update_all_body_pool2d(CVE_BodyPool2D_Internal* body_pool, CVE_Float time, CVE_Vec2f gravity);
-
-
 
 #endif
 

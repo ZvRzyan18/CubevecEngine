@@ -25,6 +25,35 @@ void __cve_collide_convex_vs_convex2d(CVE_Body2D *a, CVE_Body2D *b,
         CVE_Manifold2D *manifold
         );
 
+void __cve_collide_convex_vs_circle2d(CVE_Body2D *a, CVE_Body2D *b,
+        CVE_Vec2f* a_vertices, CVE_Vec2f* a_normals, CVE_Size a_vertices_size, 
+        CVE_Float b_radius,
+        CVE_Manifold2D *manifold
+       );
+
+void __cve_collide_circle_vs_circle2d(CVE_Body2D *a, CVE_Body2D *b,
+        CVE_Float a_radius,
+        CVE_Float b_radius,
+        CVE_Manifold2D *manifold
+       );
+
+void __cve_collide_convex_vs_convex2d_contact(CVE_Body2D *a, CVE_Body2D *b, 
+        CVE_Vec2f* a_vertices, CVE_Size a_vertices_size, 
+        CVE_Vec2f* b_vertices, CVE_Size b_vertices_size,
+        CVE_Manifold2D *manifold
+        );
+
+void __cve_collide_convex_vs_circle2d_contact(CVE_Body2D *a, CVE_Body2D *b,
+        CVE_Vec2f* a_vertices, CVE_Size a_vertices_size, 
+        CVE_Float b_radius,
+        CVE_Manifold2D *manifold
+       );
+
+void __cve_collide_circle_vs_circle2d_contact(CVE_Body2D *a, CVE_Body2D *b,
+        CVE_Float a_radius,
+        CVE_Float b_radius,
+        CVE_Manifold2D *manifold
+       );
 
 void __cve_collide2d(CVE_Body2D *a, CVE_Body2D *b, CVE_Manifold2D *manifold);
 

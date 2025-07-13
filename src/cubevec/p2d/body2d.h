@@ -22,7 +22,6 @@ typedef struct CVE_BodyInternalPart2D CVE_BodyInternalPart2D;
 struct CVE_BodyInternalPart2D {
 	CVE_Uint  body_type;
 	CVE_Uint  movement_type;
-	CVE_Uint  components_index;
 
 	CVE_Vec2f position;
 	CVE_Float rotation;
@@ -32,16 +31,18 @@ struct CVE_BodyInternalPart2D {
 	CVE_Float torque;
 	CVE_Vec2f centroid;
 	CVE_Float density;
+	CVE_Float restitution;
  CVE_Float area;
 	CVE_Float mass;
 	CVE_Float inv_mass;
 	CVE_Float rotational_inertia;
 	CVE_Float inv_rotational_inertia;
 	
-	CVE_Float static_friction;
-	CVE_Float dynamic_friction;
+	CVE_Float friction;
 	CVE_Vec2f aabb[2];
 	void      (*update)(void* self, CVE_Float time);
+	CVE_BodyInternalPart2D* next;
+	CVE_BodyInternalPart2D* prev;
 };
 
 
@@ -50,7 +51,6 @@ struct CVE_BodyInternalPart2D {
  *               SPECIFIC BODY TYPE
  *
  *********************************************/
-
 
 typedef struct {
 	CVE_BodyInternalPart2D components;
@@ -66,7 +66,6 @@ typedef struct {
 
 typedef struct {
 	CVE_BodyInternalPart2D components;
-	CVE_Vec2f              vertices[3];
 	CVE_Vec2f              transformed_vertices[3];
 	CVE_Vec2f              normals[3];
 } CVE_TriangleBody2D;
@@ -94,7 +93,7 @@ typedef union {
 	CVE_ConvexBody2D       convex_body;
 } CVE_Body2D;
 
-//this will asign a function depends on its type
+/* this will asign a function depends on its type */
 void __cve_init_body2d(CVE_Body2D* body2d);
 
 

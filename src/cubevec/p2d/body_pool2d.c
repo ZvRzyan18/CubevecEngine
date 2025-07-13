@@ -101,7 +101,7 @@ void __cve_allocate_to_body_pool2d(CVE_BodyPool2D_Internal* body_pool, CVE_Uint 
 
    for(i = 0; i < body_pool->chunk_size; i++) {
  		
- 		 //chunk is full, go to the next one 
+ 		 /* chunk is full, go to the next one */
  		 if(current_node->body_size == body_pool->max_chunk_element_size)
  		  continue;
 
@@ -109,26 +109,26 @@ void __cve_allocate_to_body_pool2d(CVE_BodyPool2D_Internal* body_pool, CVE_Uint 
  		  if(current_node->body_array[j].body_type == 0) {
  		  	current_node->body_array[j].body_type = body_type;
  		  	current_node->body_size++;
- 		  	body_handle->body_handle = &current_node->body_array[j];
- 		  	body_handle->chunk_handle = current_node;
+ 		  	(*body_handle) = &current_node->body_array[j];
  		  	return;
  		  }
  		 }
  		 
  	 current_node = current_node->next;
   }
- //all chunks are full, so lets allocate more and 
- //repeat the entire process
+ /*
+  all chunks are full, so lets allocate more and 
+  repeat the entire process
+ */
   __cve_push_body_pool2d(body_pool);
   
- 	 current_node = current_node->next;
+ 	 current_node = body_pool->end_node;
 
   	for(j = 0; j < body_pool->max_chunk_element_size; j++) {
  		 if(current_node->body_array[j].body_type == 0) {
  		 	current_node->body_array[j].body_type = body_type;
  		  current_node->body_size++;
- 		 	body_handle->body_handle = &current_node->body_array[j];
- 		 	body_handle->chunk_handle = current_node;
+ 		 	(*body_handle) = &current_node->body_array[j];
  		 	return;
  		 }
    }
@@ -140,20 +140,23 @@ void __cve_allocate_to_body_pool2d(CVE_BodyPool2D_Internal* body_pool, CVE_Uint 
 
 
 void __cve_deallocate_to_body_pool2d(CVE_BodyPool2D_Internal* body_pool, CVE_BodyHandle2D body_handle) {
-	CVE_Size i;
- CVE_BodyPool2D_Chunk *current_node = (CVE_BodyPool2D_Chunk*)body_handle.chunk_handle;
+	CVE_Size i, j;
+ CVE_BodyPool2D_Chunk *current_node;
+ 	current_node = body_pool->root_node;
 
-  for(i = 0; i < body_pool->max_chunk_element_size; i++) {
- 	 if((&current_node->body_array[i]) == body_handle.body_handle) {
- 	 	memset(body_handle.body_handle, 0, sizeof(CVE_Body2D));
- 	 	if(current_node->body_size == 1 && current_node == body_pool->end_node) {
+ for(i = 0; i < body_pool->chunk_size; i++) {
+
+  for(j = 0; j < body_pool->max_chunk_element_size; j++) {
+ 	 if((&current_node->body_array[j]) == (body_handle)) {
+ 	 	memset(body_handle, 0, sizeof(CVE_Body2D));
+ 	 	if((current_node->body_size == 1) && (current_node == body_pool->end_node)) {
  	 		__cve_pop_body_pool2d(body_pool);
  	 	} else
  		 	current_node->body_size--;
  			return;
  		}
  	}
-
+ }
  __cve_global_error_handler.error_msg("at function [__cve_deallocate_to_body_pool2d()] : invalid pointer value.");
 }
 
@@ -189,17 +192,19 @@ void __cve_destroy_body_pool2d(CVE_BodyPool2D_Internal* body_pool) {
  			 current_body_size++;
  			break;
  			case 0:
- 			 //not occupied by any object
+ 			 /* not occupied by any object */
  			break;
  			default:
- 			 //error occured, invalid type
+ 			 /* error occured, invalid type */
  			break;
  		}
  	}
  	
  	if(current_body_size != current_node->body_size) {
- 		//there must be some kind of error
- 		//or memory corruption
+ 		/*
+ 		 there must be some kind of error
+ 		 or memory corruption
+ 		*/
  	 __cve_global_error_handler.error_msg("at function [__cve_destroy_body_pool2d()] : unexpected memory error.");
  	}
  	 	 
@@ -219,7 +224,7 @@ void __cve_destroy_body_pool2d(CVE_BodyPool2D_Internal* body_pool) {
 }
 
 
-
+/*
 void __cve_update_all_body_pool2d(CVE_BodyPool2D_Internal* body_pool, CVE_Float time, CVE_Vec2f gravity) {
 
 
@@ -245,6 +250,8 @@ void __cve_update_all_body_pool2d(CVE_BodyPool2D_Internal* body_pool, CVE_Float 
  
  
 }
+*/
+
 
 
 
