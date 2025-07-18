@@ -21,6 +21,149 @@
 /*
  rounding floats
 */
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
+#define CVE_Trunc(out, a) \
+        do { \
+         CVE_Float CVE_Trunc_mx; \
+         CVE_Trunc_mx = a; \
+          __asm__ volatile( \
+          "frintz %s0, %s0 \n" \
+          : "=w"(CVE_Trunc_mx) \
+          ); \
+          out = CVE_Trunc_mx; \
+        } while(0)
+#else
+
+#if defined(CVE_USE_STD_MATH) && defined(CVE_F32)
+#define CVE_Trunc(out, a) \
+         out = truncf(a)
+#elif defined(CVE_USE_STD_MATH) && defined(CVE_F64)
+#define CVE_Trunc(out, a) \
+         out = trunc(a)
+#else
+#define CVE_Trunc(out, a) \
+         out = __cve_trunc(a)
+#endif
+
+#endif
+
+
+
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
+#define CVE_Round(out, a) \
+        do { \
+         CVE_Float CVE_Trunc_mx; \
+         CVE_Trunc_mx = a; \
+          __asm__ volatile( \
+          "frintn %s0, %s0 \n" \
+          : "=w"(CVE_Trunc_mx) \
+          ); \
+          out = CVE_Trunc_mx; \
+        } while(0)
+#else
+
+#if defined(CVE_USE_STD_MATH) && defined(CVE_F32)
+#define CVE_Round(out, a) \
+         out = roundf(a)
+#elif defined(CVE_USE_STD_MATH) && defined(CVE_F64)
+#define CVE_Round(out, a) \
+         out = round(a)
+#else
+#define CVE_Round(out, a) \
+         out = __cve_round(a)
+#endif
+
+#endif
+
+
+
+
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
+#define CVE_Floor(out, a) \
+        do { \
+         CVE_Float CVE_Trunc_mx; \
+         CVE_Trunc_mx = a; \
+          __asm__ volatile( \
+          "frintm %s0, %s0 \n" \
+          : "=w"(CVE_Trunc_mx) \
+          ); \
+          out = CVE_Trunc_mx; \
+        } while(0)
+#else
+
+#if defined(CVE_USE_STD_MATH) && defined(CVE_F32)
+#define CVE_Floor(out, a) \
+         out = floorf(a)
+#elif defined(CVE_USE_STD_MATH) && defined(CVE_F64)
+#define CVE_Floor(out, a) \
+         out = floor(a)
+#else
+#define CVE_Floor(out, a) \
+         out = __cve_floor(a)
+#endif
+
+#endif
+
+
+
+
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
+#define CVE_Ceil(out, a) \
+        do { \
+         CVE_Float CVE_Trunc_mx; \
+         CVE_Trunc_mx = a; \
+          __asm__ volatile( \
+          "frintp %s0, %s0 \n" \
+          : "=w"(CVE_Trunc_mx) \
+          ); \
+          out = CVE_Trunc_mx; \
+        } while(0)
+#else
+
+#if defined(CVE_USE_STD_MATH) && defined(CVE_F32)
+#define CVE_Ceil(out, a) \
+         out = ceilf(a)
+#elif defined(CVE_USE_STD_MATH) && defined(CVE_F64)
+#define CVE_Ceil(out, a) \
+         out = ceil(a)
+#else
+#define CVE_Ceil(out, a) \
+         out = __cve_ceil(a)
+#endif
+
+#endif
+
+
+/*
+ rounding modes
+*/
+#define CVE_TRUNC 0
+#define CVE_ROUND 1
+#define CVE_FLOOR 2
+#define CVE_CEIL  3
+
+#define CVE_LRint(out, a, mode) \
+        do { \
+         switch(mode) {\
+          case CVE_TRUNC: \
+           CVE_Trunc(out, a); \
+          break; \
+          case CVE_ROUND: \
+           CVE_Round(out, a); \
+          break; \
+          case CVE_FLOOR: \
+           CVE_Floor(out, a); \
+          break; \
+          case CVE_CEIL: \
+           CVE_Ceil(out, a); \
+          break; \
+         } \
+        } while(0)
+
+CVE_Float __cve_trunc(CVE_Float a);
+CVE_Float __cve_round(CVE_Float a);
+CVE_Float __cve_floor(CVE_Float a);
+CVE_Float __cve_ceil(CVE_Float a);
 
 
 /*

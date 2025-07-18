@@ -75,7 +75,7 @@
  *********************************************/
 
 
-#if defined(CVE_CPU_ARM64)
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
 #define CVE_ScalarToVector2f(out, a) \
         do { \
          float32x2_t CVE_ScalarToVector2f_mx = vdup_n_f32(a); \
@@ -91,7 +91,7 @@
 
 
 
-#if defined(CVE_CPU_ARM64)
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
 #define CVE_Negate2f(out, a) \
         do { \
          float32x2_t CVE_Negate2f_mx; \
@@ -108,7 +108,7 @@
 #endif
 
 
-#if defined(CVE_CPU_ARM64)
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
 #define CVE_Add2f(out, a, b) \
         do { \
          float32x2_t CVE_Add2f_ma, CVE_Add2f_mb; \
@@ -126,7 +126,7 @@
 #endif
 
 
-#if defined(CVE_CPU_ARM64)
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
 #define CVE_Sub2f(out, a, b) \
         do { \
          float32x2_t CVE_Sub2f_ma, CVE_Sub2f_mb; \
@@ -144,7 +144,7 @@
 #endif
 
 
-#if defined(CVE_CPU_ARM64)
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
 #define CVE_Mul2f(out, a, b) \
         do { \
          float32x2_t CVE_Mul2f_ma, CVE_Mul2f_mb; \
@@ -162,7 +162,7 @@
 #endif
 
 
-#if defined(CVE_CPU_ARM64)
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
 #define CVE_Div2f(out, a, b) \
         do { \
          float32x2_t CVE_Div2f_ma, CVE_Div2f_mb; \
@@ -182,7 +182,7 @@
 
 
 
-#if defined(CVE_CPU_ARM64)
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
 #define CVE_ScalarToVector2u(out, a) \
         do { \
          uint32x2_t CVE_ScalarToVector2u_mx = vdup_n_u32(a); \
@@ -198,7 +198,7 @@
 
 
 
-#if defined(CVE_CPU_ARM64)
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
 #define CVE_Add2u(out, a, b) \
         do { \
          uint32x2_t CVE_Add2u_ma, CVE_Add2u_mb; \
@@ -216,7 +216,7 @@
 #endif
 
 
-#if defined(CVE_CPU_ARM64)
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
 #define CVE_Sub2u(out, a, b) \
         do { \
          uint32x2_t CVE_Sub2u_ma, CVE_Sub2u_mb; \
@@ -233,7 +233,7 @@
         } while(0)
 #endif
 
-#if defined(CVE_CPU_ARM64)
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
 #define CVE_Mul2u(out, a, b) \
         do { \
          uint32x2_t CVE_Mul2u_ma, CVE_Mul2u_mb; \
@@ -264,7 +264,7 @@
  *********************************************/
 
 
-#if defined(CVE_CPU_ARM64)
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
 #define CVE_ScalarToVector3f(out, a) \
         do { \
          float32x4_t CVE_ScalarToVector3f_mx = vdupq_n_f32(a); \
@@ -279,7 +279,7 @@
         } while(0)
 #endif
 
-#if defined(CVE_CPU_ARM64)
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
 #define CVE_Negate3f(out, a) \
         do { \
          float32x4_t CVE_Negate3f_mx; \
@@ -296,7 +296,7 @@
         } while(0)
 #endif
 
-#if defined(CVE_CPU_ARM64)
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
 #define CVE_Add3f(out, a, b) \
         do { \
          float32x4_t CVE_Add3f_ma, CVE_Add3f_mb; \
@@ -315,7 +315,7 @@
 #endif
 
 
-#if defined(CVE_CPU_ARM64)
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
 #define CVE_Sub3f(out, a, b) \
         do { \
          float32x4_t CVE_Sub3f_ma, CVE_Sub3f_mb; \
@@ -333,7 +333,7 @@
         } while(0)
 #endif
 
-#if defined(CVE_CPU_ARM64)
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
 #define CVE_Mul3f(out, a, b) \
         do { \
          float32x4_t CVE_Mul3f_ma, CVE_Mul3f_mb; \
@@ -353,7 +353,7 @@
 
 
 
-#if defined(CVE_CPU_ARM64)
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
 #define CVE_Div3f(out, a, b) \
         do { \
          float32x4_t CVE_Div3f_ma, CVE_Div3f_mb; \
@@ -373,7 +373,7 @@
 
 
 
-#if defined(CVE_CPU_ARM64)
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
 #define CVE_ScalarToVector3u(out, a) \
         do { \
          uint32x4_t CVE_ScalarToVector3u_mx = vdupq_n_u32(a); \
@@ -389,7 +389,7 @@
 #endif
 
 
-#if defined(CVE_CPU_ARM64)
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
 #define CVE_Add3u(out, a, b) \
         do { \
          uint32x4_t CVE_Add3u_ma, CVE_Add3u_mb; \
@@ -407,7 +407,7 @@
         } while(0)
 #endif
 
-#if defined(CVE_CPU_ARM64)
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
 #define CVE_Sub3u(out, a, b) \
         do { \
          uint32x4_t CVE_Sub3u_ma, CVE_Sub3u_mb; \
@@ -425,7 +425,7 @@
         } while(0)
 #endif
 
-#if defined(CVE_CPU_ARM64)
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
 #define CVE_Mul3u(out, a, b) \
         do { \
          uint32x4_t CVE_Mul3u_ma, CVE_Mul3u_mb; \
@@ -458,7 +458,7 @@
  *********************************************/
 
 
-#if defined(CVE_CPU_ARM64)
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
 #define CVE_ScalarToVector4f(out, a) \
         do { \
          float32x4_t CVE_ScalarToVector4f_mx = vdupq_n_f32(a); \
@@ -474,7 +474,7 @@
         } while(0)
 #endif
 
-#if defined(CVE_CPU_ARM64)
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
 #define CVE_Negate4f(out, a) \
         do { \
          float32x4_t CVE_Negate4f_mx; \
@@ -492,7 +492,7 @@
         } while(0)
 #endif
 
-#if defined(CVE_CPU_ARM64)
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
 #define CVE_Add4f(out, a, b) \
         do { \
          float32x4_t CVE_Add4f_ma, CVE_Add4f_mb; \
@@ -512,7 +512,7 @@
 #endif
 
 
-#if defined(CVE_CPU_ARM64)
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
 #define CVE_Sub4f(out, a, b) \
         do { \
          float32x4_t CVE_Sub4f_ma, CVE_Sub4f_mb; \
@@ -532,7 +532,7 @@
 #endif
 
 
-#if defined(CVE_CPU_ARM64)
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
 #define CVE_Mul4f(out, a, b) \
         do { \
          float32x4_t CVE_Mul4f_ma, CVE_Mul4f_mb; \
@@ -551,7 +551,7 @@
         } while(0)
 #endif
 
-#if defined(CVE_CPU_ARM64)
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
 #define CVE_Div4f(out, a, b) \
         do { \
          float32x4_t CVE_Div4f_ma, CVE_Div4f_mb; \
@@ -572,7 +572,7 @@
 
 
 
-#if defined(CVE_CPU_ARM64)
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
 #define CVE_ScalarToVector4u(out, a) \
         do { \
          uint32x4_t CVE_ScalarToVector4u_mx = vdupq_n_u32(a); \
@@ -589,7 +589,7 @@
 #endif
 
 
-#if defined(CVE_CPU_ARM64)
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
 #define CVE_Add4u(out, a, b) \
         do { \
          uint32x4_t CVE_Add4u_ma, CVE_Add4u_mb; \
@@ -608,7 +608,7 @@
         } while(0)
 #endif
 
-#if defined(CVE_CPU_ARM64)
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
 #define CVE_Sub4u(out, a, b) \
         do { \
          uint32x4_t CVE_Sub4u_ma, CVE_Sub4u_mb; \
@@ -627,7 +627,7 @@
         } while(0)
 #endif
 
-#if defined(CVE_CPU_ARM64)
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
 #define CVE_Mul4u(out, a, b) \
         do { \
          uint32x4_t CVE_Mul4u_ma, CVE_Mul4u_mb; \
@@ -662,7 +662,7 @@
  *********************************************/
 
 
-#if defined(CVE_CPU_ARM64)
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
 #define CVE_Fma(out, a, b, c) \
         do { \
           __asm__ volatile( \
@@ -672,11 +672,21 @@
          );  \
         } while(0)
 #else
+
+#if defined(CVE_USE_STD_MATH) && defined(CVE_F32)
+#define CVE_Fma(out, a, b, c) \
+         out = fmaf(a, b, c)
+#elif defined(CVE_USE_STD_MATH) && defined(CVE_F64)
+#define CVE_Fma(out, a, b, c) \
+         out = fma(a, b, c)
+#else
 #define CVE_Fma(out, a, b, c) \
         out = a * b + c;
 #endif
 
-#if defined(CVE_CPU_ARM64)
+#endif
+
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
 #define CVE_Fma2f(out, a, b, c) \
         do { \
         	float32x2_t CVE_Fma2f_a, CVE_Fma2f_b, CVE_Fma2f_c; \
@@ -687,6 +697,20 @@
         	CVE_Neon_ToVec2f(out, CVE_Fma2f_a); \
         } while(0)
 #else
+
+#if defined(CVE_USE_STD_MATH) && defined(CVE_F32)
+#define CVE_Fma2f(out, a, b, c) \
+         do { \
+          out.x = fmaf(a.x, b.x, c.x); \
+          out.y = fmaf(a.y, b.y, c.y); \
+         } while(0)
+#elif defined(CVE_USE_STD_MATH) && defined(CVE_F64)
+#define CVE_Fma2f(out, a, b, c) \
+         do { \
+          out.x = fma(a.x, b.x, c.x); \
+          out.y = fma(a.y, b.y, c.y); \
+         } while(0)
+#else
 #define CVE_Fma2f(out, a, b, c) \
          do { \
           CVE_Vec2f CVE_Fma2f_product; \
@@ -695,7 +719,9 @@
          } while(0)
 #endif
 
-#if defined(CVE_CPU_ARM64)
+#endif
+
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
 #define CVE_Fma3f(out, a, b, c) \
         do { \
         	float32x4_t CVE_Fma3f_a, CVE_Fma3f_b, CVE_Fma3f_c; \
@@ -706,6 +732,22 @@
         	CVE_Neon_ToVec3f(out, CVE_Fma3f_a); \
         } while(0)
 #else
+
+#if defined(CVE_USE_STD_MATH) && defined(CVE_F32)
+#define CVE_Fma3f(out, a, b, c) \
+         do { \
+          out.x = fmaf(a.x, b.x, c.x); \
+          out.y = fmaf(a.y, b.y, c.y); \
+          out.z = fmaf(a.z, b.z, c.z); \
+         } while(0)
+#elif defined(CVE_USE_STD_MATH) && defined(CVE_F64)
+#define CVE_Fma3f(out, a, b, c) \
+         do { \
+          out.x = fma(a.x, b.x, c.x); \
+          out.y = fma(a.y, b.y, c.y); \
+          out.z = fma(a.z, b.z, c.z); \
+         } while(0)
+#else
 #define CVE_Fma3f(out, a, b, c) \
          do { \
           CVE_Vec3f CVE_Fma3f_product; \
@@ -714,8 +756,10 @@
          } while(0)
 #endif
 
+#endif
 
-#if defined(CVE_CPU_ARM64)
+
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
 #define CVE_Fma4f(out, a, b, c) \
         do { \
         	float32x4_t CVE_Fma4f_a, CVE_Fma4f_b, CVE_Fma4f_c; \
@@ -726,12 +770,32 @@
         	CVE_Neon_ToVec4f(out, CVE_Fma4f_a); \
         } while(0)
 #else
+
+#if defined(CVE_USE_STD_MATH) && defined(CVE_F32)
+#define CVE_Fma4f(out, a, b, c) \
+         do { \
+          out.x = fmaf(a.x, b.x, c.x); \
+          out.y = fmaf(a.y, b.y, c.y); \
+          out.z = fmaf(a.z, b.z, c.z); \
+          out.w = fmaf(a.w, b.w, c.w); \
+         } while(0)
+#elif defined(CVE_USE_STD_MATH) && defined(CVE_F64)
+#define CVE_Fma4f(out, a, b, c) \
+         do { \
+          out.x = fma(a.x, b.x, c.x); \
+          out.y = fma(a.y, b.y, c.y); \
+          out.z = fma(a.z, b.z, c.z); \
+          out.w = fma(a.w, b.w, c.w); \
+         } while(0)
+#else
 #define CVE_Fma4f(out, a, b, c) \
          do { \
           CVE_Vec4f CVE_Fma4f_product; \
           CVE_Mul4f(CVE_Fma4f_product, a, b); \
           CVE_Add4f(out, CVE_Fma4f_product, c); \
          } while(0)
+#endif
+
 #endif
 
 /*********************************************
@@ -741,7 +805,7 @@
  *********************************************/
 
 
-#if defined(CVE_CPU_ARM64)
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
 #define CVE_Ternary2f(out, cond, a, b) \
         do { \
          uint32x2_t CVE_Ternary2f_c; \
@@ -761,7 +825,7 @@
 #endif
 
 
-#if defined(CVE_CPU_ARM64)
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
 #define CVE_Ternary3f(out, cond, a, b) \
         do { \
          uint32x4_t CVE_Ternary3f_c; \
@@ -782,7 +846,7 @@
 #endif
 
 
-#if defined(CVE_CPU_ARM64)
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
 #define CVE_Ternary4f(out, cond, a, b) \
         do { \
          uint32x4_t CVE_Ternary4f_c; \
@@ -811,7 +875,7 @@
 
 
 
-#if defined(CVE_CPU_ARM64)
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
 #define CVE_Equals2u(out, a, b) \
         do { \
         	uint32x2_t CVE_Equals2u_a, CVE_Equals2u_b; \
@@ -828,7 +892,7 @@
         } while(0)
 #endif
 
-#if defined(CVE_CPU_ARM64)
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
 #define CVE_NotEquals2u(out, a, b) \
         do { \
         	uint32x2_t CVE_NotEquals2u_a, CVE_NotEquals2u_b; \
@@ -845,7 +909,7 @@
         } while(0)
 #endif
 
-#if defined(CVE_CPU_ARM64)
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
 #define CVE_GreaterThan2u(out, a, b) \
         do { \
         	uint32x2_t CVE_GreaterThan2u_a, CVE_GreaterThan2u_b; \
@@ -862,7 +926,7 @@
         } while(0)
 #endif
 
-#if defined(CVE_CPU_ARM64)
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
 #define CVE_GreaterThan2f(out, a, b) \
         do { \
         	float32x2_t CVE_GreaterThan2f_a, CVE_GreaterThan2f_b; \
@@ -881,7 +945,7 @@
 #endif
 
 
-#if defined(CVE_CPU_ARM64)
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
 #define CVE_GreaterThanEquals2u(out, a, b) \
         do { \
         	uint32x2_t CVE_GreaterThanEquals2u_a, CVE_GreaterThanEquals2u_b; \
@@ -899,7 +963,7 @@
 #endif
 
 
-#if defined(CVE_CPU_ARM64)
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
 #define CVE_GreaterThanEquals2f(out, a, b) \
         do { \
         	float32x2_t CVE_GreaterThanEquals2f_a, CVE_GreaterThanEquals2f_b; \
@@ -918,7 +982,7 @@
 #endif
 
 
-#if defined(CVE_CPU_ARM64)
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
 #define CVE_LessThan2u(out, a, b) \
         do { \
         	uint32x2_t CVE_LessThan2u_a, CVE_LessThan2u_b; \
@@ -935,7 +999,7 @@
         } while(0)
 #endif
 
-#if defined(CVE_CPU_ARM64)
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
 #define CVE_LessThan2f(out, a, b) \
         do { \
         	float32x2_t CVE_LessThan2f_a, CVE_LessThan2f_b; \
@@ -943,7 +1007,7 @@
          CVE_Neon_FromVec2f(CVE_LessThan2f_a, a); \
          CVE_Neon_FromVec2f(CVE_LessThan2f_b, b); \
          CVE_LessThan2f_c = vclt_f32(CVE_LessThan2f_a, CVE_LessThan2f_b); \
-         CVE_Neon_ToVec2u(out, CVE_LessThan2f_a); \
+         CVE_Neon_ToVec2u(out, CVE_LessThan2f_c); \
         } while(0)
 #else
 #define CVE_LessThan2f(out, a, b) \
@@ -955,7 +1019,7 @@
 
 
 
-#if defined(CVE_CPU_ARM64)
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
 #define CVE_LessThanEquals2u(out, a, b) \
         do { \
         	uint32x2_t CVE_LessThanEquals_a, CVE_LessThanEquals_b; \
@@ -972,7 +1036,7 @@
         } while(0)
 #endif
 
-#if defined(CVE_CPU_ARM64)
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
 #define CVE_LessThanEquals2f(out, a, b) \
         do { \
         	float32x2_t CVE_LessThanEquals2f_a, CVE_LessThanEquals2f_b; \
@@ -999,7 +1063,7 @@
  *********************************************/
 
 
-#if defined(CVE_CPU_ARM64)
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
 #define CVE_BitwiseAnd2u(out, a, b) \
         do { \
         	uint32x2_t CVE_BitwiseAnd2u_a, CVE_BitwiseAnd2u_b; \
@@ -1018,7 +1082,7 @@
 
 
 
-#if defined(CVE_CPU_ARM64)
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
 #define CVE_BitwiseOr2u(out, a, b) \
         do { \
         	uint32x2_t CVE_BitwiseOr2u_a, CVE_BitwiseOr2u_b; \
@@ -1036,7 +1100,7 @@
 #endif
 
 
-#if defined(CVE_CPU_ARM64)
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
 #define CVE_BitwiseXor2u(out, a, b) \
         do { \
         	uint32x2_t CVE_BitwiseXor2u_a, CVE_BitwiseXor2u_b; \
@@ -1054,7 +1118,7 @@
 #endif
 
 
-#if defined(CVE_CPU_ARM64)
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
 #define CVE_BitshiftRight2u(out, a, b) \
         do { \
         	uint32x2_t CVE_BitshiftRight2u_a, CVE_BitshiftRight2u_b; \
@@ -1072,7 +1136,7 @@
 #endif
 
 
-#if defined(CVE_CPU_ARM64)
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
 #define CVE_BitshiftLeft2u(out, a, b) \
         do { \
         	uint32x2_t CVE_BitshiftLeft2u_a, CVE_BitshiftLeft2u_b; \
@@ -1089,7 +1153,7 @@
         } while(0)
 #endif
 
-#if defined(CVE_CPU_ARM64)
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
 #define CVE_BitwiseNot2u(out, a) \
         do { \
         	uint32x2_t CVE_BitwiseNot2u_a; \

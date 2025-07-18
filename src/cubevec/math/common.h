@@ -20,8 +20,19 @@
  compare values 
  NOTE : please use this values for consistency
 */
+
+#if defined(CVE_F32)
+
 #define CVE_HUGE_FLOAT 1e+30
 #define CVE_EPSILON_FLOAT 1e-3
+
+#elif defined(CVE_F64)
+
+#define CVE_HUGE_FLOAT 1e+300
+#define CVE_EPSILON_FLOAT 1e-8
+
+#endif
+
 
 
 #define CVE_PI_FLOAT 3.1415926
@@ -43,7 +54,7 @@
  *********************************************/
 
 
-#if defined(CVE_CPU_ARM64)
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
 #define CVE_Abs(out, a) \
         do { \
          __asm__ volatile( \
@@ -53,12 +64,21 @@
          ); \
         } while(0)
 #else
+#if defined(CVE_USE_STD_MATH) && defined(CVE_F32)
+#define CVE_Abs(out, a) \
+         out = fabsf(a)
+#elif defined(CVE_USE_STD_MATH) && defined(CVE_F64)
+#define CVE_Abs(out, a) \
+         out = fabs(a)
+#else
 #define CVE_Abs(out, a) \
         out = (a < 0.0) ? -a : a
 #endif
 
+#endif
 
-#if defined(CVE_CPU_ARM64)
+
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
 #define CVE_Abs2f(out, a) \
         do { \
          float32x2_t CVE_Abs2f_x; \
@@ -67,20 +87,52 @@
          CVE_Neon_ToVec2f(out, CVE_Abs2f_x); \
         } while(0)
 #else
+
+#if defined(CVE_USE_STD_MATH) && defined(CVE_F32)
+#define CVE_Abs2f(out, a) \
+        do { \
+        out.x = fabsf(a.x); \
+        out.y = fabsf(a.y); \
+        } while(0)
+#elif defined(CVE_USE_STD_MATH) && defined(CVE_F64)
+#define CVE_Abs2f(out, a) \
+        do { \
+        out.x = fabs(a.x); \
+        out.y = fabs(a.y); \
+        } while(0)
+#else
 #define CVE_Abs2f(out, a) \
         do { \
         out.x = a.x < 0.0 ? -a.x : a.x; \
         out.y = a.y < 0.0 ? -a.y : a.y; \
         } while(0)
+#endif
+
 #endif 
 
-#if defined(CVE_CPU_ARM64)
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
 #define CVE_Abs3f(out, a) \
         do { \
          float32x4_t CVE_Abs3f_x; \
          CVE_Neon_FromVec3f(CVE_Abs3f_x, a); \
          CVE_Abs3f_x = vabsq_f32(CVE_Abs3f_x); \
          CVE_Neon_ToVec3f(out, CVE_Abs3f_x); \
+        } while(0)
+#else
+
+#if defined(CVE_USE_STD_MATH) && defined(CVE_F32)
+#define CVE_Abs3f(out, a) \
+        do { \
+        out.x = fabsf(a.x); \
+        out.y = fabsf(a.y); \
+        out.z = fabsf(a.z); \
+        } while(0)
+#elif defined(CVE_USE_STD_MATH) && defined(CVE_F64)
+#define CVE_Abs3f(out, a) \
+        do { \
+        out.x = fabs(a.x); \
+        out.y = fabs(a.y); \
+        out.z = fabs(a.z); \
         } while(0)
 #else
 #define CVE_Abs3f(out, a) \
@@ -91,14 +143,34 @@
         } while(0)
 #endif
 
+#endif
 
-#if defined(CVE_CPU_ARM64)
+
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
 #define CVE_Abs4f(out, a) \
         do { \
          float32x4_t CVE_Abs4f_x; \
          CVE_Neon_FromVec4f(CVE_Abs4f_x, a); \
          CVE_Abs4f_x = vabsq_f32(CVE_Abs4f_x); \
          CVE_Neon_ToVec4f(out, CVE_Abs4f_x); \
+        } while(0)
+#else
+
+#if defined(CVE_USE_STD_MATH) && defined(CVE_F32)
+#define CVE_Abs4f(out, x) \
+        do { \
+        out.x = fabsf(a.x); \
+        out.y = fabsf(a.y); \
+        out.z = fabsf(a.z); \
+        out.z = fabsf(a.w); \
+        } while(0)
+#elif defined(CVE_USE_STD_MATH) && defined(CVE_F64)
+#define CVE_Abs4f(out, x) \
+        do { \
+        out.x = fabs(a.x); \
+        out.y = fabs(a.y); \
+        out.z = fabs(a.z); \
+        out.z = fabs(a.w); \
         } while(0)
 #else
 #define CVE_Abs4f(out, x) \
@@ -108,6 +180,8 @@
         out.z = a.z < 0.0 ? -a.z : a.z; \
         out.z = a.w < 0.0 ? -a.w : a.w; \
         } while(0)
+#endif
+
 #endif
 
 
@@ -127,7 +201,7 @@
         out = a < b ? a : b
 
 
-#if defined(CVE_CPU_ARM64)
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
 #define CVE_Min2f(out, a, b) \
         do { \
          float32x2_t CVE_Min2f_a, CVE_Min2f_b; \
@@ -145,7 +219,7 @@
 #endif
 
 
-#if defined(CVE_CPU_ARM64)
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
 #define CVE_Min3f(out, a, b) \
         do { \
          float32x4_t CVE_Min3f_a, CVE_Min3f_b; \
@@ -165,7 +239,7 @@
 
 
 
-#if defined(CVE_CPU_ARM64)
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
 #define CVE_Min4f(out, a, b) \
         do { \
          float32x4_t CVE_Min4f_a, CVE_Min4f_b; \
@@ -197,7 +271,7 @@
         out = a > b ? a : b
 
 
-#if defined(CVE_CPU_ARM64)
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
 #define CVE_Max2f(out, a, b) \
         do { \
          float32x2_t CVE_Max2f_a, CVE_Max2f_b; \
@@ -214,7 +288,7 @@
         } while(0)
 #endif
 
-#if defined(CVE_CPU_ARM64)
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
 #define CVE_Max3f(out, a, b) \
         do { \
          float32x4_t CVE_Max3f_a, CVE_Max3f_b; \
@@ -233,7 +307,7 @@
 #endif
 
 
-#if defined(CVE_CPU_ARM64)
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
 #define CVE_Max4f(out, a, b) \
         do { \
          float32x4_t CVE_Max4f_a, CVE_Max4f_b; \
