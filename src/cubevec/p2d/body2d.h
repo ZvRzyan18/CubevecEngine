@@ -40,7 +40,7 @@ struct CVE_BodyInternalPart2D {
 	
 	CVE_Float friction;
 	CVE_Vec2f aabb[2];
-	void      (*update)(void* self, CVE_Float time);
+	void      (*update)(void* self, CVE_Float time, CVE_Vec2f gravity);
 	CVE_BodyInternalPart2D* next;
 	CVE_BodyInternalPart2D* prev;
 };

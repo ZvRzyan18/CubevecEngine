@@ -18,11 +18,12 @@ extern CVE_ErrorHandler __cve_global_error_handler;
  *
  *********************************************/
 
+static void __cve_bruite_force(void* ptr);
 
 /*
  allocate world2d object
 */
-void cveCreateWorld2D(CVE_World2D* world) {
+CVE_API void cveCreateWorld2D(CVE_World2D* world) {
 	(*world) = __cve_global_allocator.allocate(sizeof(CVE_World2D_Internal));
 
 	if((*world) == NULL)
@@ -37,7 +38,7 @@ void cveCreateWorld2D(CVE_World2D* world) {
 /*
  cleanup world2d object
 */
-void cveDestroyWorld2D(CVE_World2D world) {
+CVE_API void cveDestroyWorld2D(CVE_World2D world) {
 	CVE_World2D_Internal* world2d = (CVE_World2D_Internal*)world;
 
 	if(world2d == NULL)
@@ -47,59 +48,50 @@ void cveDestroyWorld2D(CVE_World2D world) {
  if(world2d->iteration > 0)
   __cve_global_allocator.deallocate(world2d->iteration_reciprocal);
 
+ switch(world2d->broadphase_type) {
+ 	case CVE_BROADPHASE2D_BRUITE_FORCE:
+ 	break;
+ 	case CVE_BROADPHASE2D_SWEEP_AND_PRUNE_X:
+   __cve_sweep_and_prune2d_destroy(&world2d->sweep_and_prune);
+ 	break;
+ 	case CVE_BROADPHASE2D_SWEEP_AND_PRUNE_Y:
+   __cve_sweep_and_prune2d_destroy(&world2d->sweep_and_prune);
+ 	break;
+ 	default:
+ 	 __cve_global_error_handler.error_msg("at function [cveAddBodyWorld2D()] : invalid broadphase type.");
+ 	break;
+ }
+
  __cve_destroy_body_pool2d(&world2d->body_pool);
 	__cve_global_allocator.deallocate(world);
 }
 
 
+
 /*
  update simulation
 */
-void cveUpdateWorld2D(CVE_World2D world, CVE_Float time) {
+CVE_API void cveUpdateWorld2D(CVE_World2D world, CVE_Float time) {
 	CVE_World2D_Internal* world2d = (CVE_World2D_Internal*)world;
- 
+
  CVE_Float *__beg = world2d->iteration_reciprocal;
  CVE_Float *__end = world2d->iteration_reciprocal + world2d->iteration;
  
- 
- while(__beg <= __end) {
+ while(__beg < __end) {
   time *= *(__beg++);
  
  	/* update position */
- 	CVE_Body2D *node, *node1;
+ 	
+ 	CVE_Body2D *node;
 
  	node = world2d->body_begin;
  	while(node != NULL) {
- 		CVE_Add2f(node->components.force, node->components.force, world2d->gravity);
- 		node->components.update(node, time);
+ 		node->components.update(node, time, world2d->gravity);
  		node = (CVE_Body2D*)node->components.next;
  	}
  	
  	/* detect collision */
- 	node = world2d->body_begin;
-  while(node != NULL) {
-   node1 = (CVE_Body2D*)node->components.next;
-   while(node1 != NULL) {
-
-    CVE_Manifold2D manifold;
-    
-   	CVE_Body2D *aa = node;
-   	CVE_Body2D *bb = node1;
-   	
-   	if(aa != bb) {
-     __cve_collide2d(aa, bb, &manifold);
-     if(manifold.collide) {
-      __cve_collision_handle_resolve(&manifold);
-      __cve_collision_handle_impulse(&manifold);
-     }
-   	}
-   	
-    node1 = (CVE_Body2D*)node1->components.next;
-   }
- 		node = (CVE_Body2D*)node->components.next;
-  }
-
-
+ 	world2d->broadphase(world2d);
 
  }
 }
@@ -108,7 +100,7 @@ void cveUpdateWorld2D(CVE_World2D world, CVE_Float time) {
 /*
  set gravity
 */
-void cveSetGravityWorld2D(CVE_World2D world, CVE_Float* gravity) {
+CVE_API void cveSetGravityWorld2D(CVE_World2D world, CVE_Float* gravity) {
 	CVE_World2D_Internal* world2d = (CVE_World2D_Internal*)world;
 
 	if(world2d == NULL)
@@ -122,7 +114,7 @@ void cveSetGravityWorld2D(CVE_World2D world, CVE_Float* gravity) {
 /*
  set iteration
 */
-void cveSetIterationWorld2D(CVE_World2D world, CVE_Uint iteration) {
+CVE_API void cveSetIterationWorld2D(CVE_World2D world, CVE_Uint iteration) {
 	CVE_World2D_Internal* world2d = (CVE_World2D_Internal*)world;
 
 	if(world2d == NULL)
@@ -152,18 +144,40 @@ void cveSetIterationWorld2D(CVE_World2D world, CVE_Uint iteration) {
 
 
 
-void cveSetEpsilonWorld2D(CVE_World2D world, CVE_Float epsilon) {
+CVE_API void cveSetBroadphaseTypeWorld2D(CVE_World2D world, CVE_Uint type) {
 	CVE_World2D_Internal* world2d = (CVE_World2D_Internal*)world;
 
 	if(world2d == NULL)
-	 __cve_global_error_handler.error_msg("at function [cveSetEpsilonWorld2D()] : null world2d.");
+	 __cve_global_error_handler.error_msg("at function [cveSetBroadphaseTypeWorld2D()] : null world2d.");
+ 
+ if(world2d->body_size > 0)
+ 	 __cve_global_error_handler.error_msg("at function [cveSetBroadphaseTypeWorld2D()] : select broadphase first before adding body2d.");
 
- world2d->epsilon = epsilon;
+ if(world2d->broadphase_type > 0)
+ 	 __cve_global_error_handler.error_msg("at function [cveSetBroadphaseTypeWorld2D()] : broadphase could only be selected once.");
+
+ world2d->broadphase_type = type;
+ switch(type) {
+ 	case CVE_BROADPHASE2D_BRUITE_FORCE:
+   world2d->broadphase = __cve_bruite_force;
+ 	break;
+ 	case CVE_BROADPHASE2D_SWEEP_AND_PRUNE_X:
+ 	 world2d->broadphase = __cve_sweep_and_prune2d_broadphase_x;
+ 	 __cve_sweep_and_prune2d_init(&world2d->sweep_and_prune);
+ 	break;
+ 	case CVE_BROADPHASE2D_SWEEP_AND_PRUNE_Y:
+ 	 world2d->broadphase = __cve_sweep_and_prune2d_broadphase_y;
+ 	 __cve_sweep_and_prune2d_init(&world2d->sweep_and_prune);
+ 	break;
+ 	default:
+ 	 __cve_global_error_handler.error_msg("at function [cveSetBroadphaseTypeWorld2D()] : invalid broadphase type.");
+ 	break;
+ }
 }
 
 
 
-void cveAddBodyWorld2D(CVE_World2D world, CVE_BodyHandle2D* handle, CVE_Uint type, CVE_Handle ptr) {
+CVE_API void cveAddBodyWorld2D(CVE_World2D world, CVE_BodyHandle2D* handle, CVE_Uint type, CVE_Handle ptr) {
 	CVE_World2D_Internal* world2d = (CVE_World2D_Internal*)world;
 	
 	if(world2d == NULL)
@@ -222,11 +236,28 @@ void cveAddBodyWorld2D(CVE_World2D world, CVE_BodyHandle2D* handle, CVE_Uint typ
  	world2d->body_end = body;
  }
  world2d->body_size++;
+ 
+ /*
+  add to broadphase container
+ */
+ switch(world2d->broadphase_type) {
+ 	case CVE_BROADPHASE2D_BRUITE_FORCE:
+ 	break;
+ 	case CVE_BROADPHASE2D_SWEEP_AND_PRUNE_X:
+   __cve_sweep_and_prune2d_add_body(&world2d->sweep_and_prune, body);
+ 	break;
+ 	case CVE_BROADPHASE2D_SWEEP_AND_PRUNE_Y:
+   __cve_sweep_and_prune2d_add_body(&world2d->sweep_and_prune, body);
+ 	break;
+ 	default:
+ 	 __cve_global_error_handler.error_msg("at function [cveAddBodyWorld2D()] : invalid broadphase type.");
+ 	break;
+ }
 }
 
 
 
-void cveRemoveBodyWorld2D(CVE_World2D world, CVE_BodyHandle2D handle) {
+CVE_API void cveRemoveBodyWorld2D(CVE_World2D world, CVE_BodyHandle2D handle) {
 	CVE_World2D_Internal* world2d = (CVE_World2D_Internal*)world;
 	
 	if(world2d == NULL)
@@ -258,6 +289,57 @@ void cveRemoveBodyWorld2D(CVE_World2D world, CVE_BodyHandle2D handle) {
 
  /* deallocate the actual data on pool*/
  __cve_deallocate_to_body_pool2d(&world2d->body_pool, handle);
+ 
+ /*
+  remove the body into broadphase container
+ */
+ switch(world2d->broadphase_type) {
+ 	case CVE_BROADPHASE2D_BRUITE_FORCE:
+ 	break;
+ 	case CVE_BROADPHASE2D_SWEEP_AND_PRUNE_X:
+   __cve_sweep_and_prune2d_remove_body(&world2d->sweep_and_prune, (CVE_Body2D*)handle);
+ 	break;
+ 	case CVE_BROADPHASE2D_SWEEP_AND_PRUNE_Y:
+   __cve_sweep_and_prune2d_remove_body(&world2d->sweep_and_prune, (CVE_Body2D*)handle);
+ 	break;
+ 	default:
+ 	 __cve_global_error_handler.error_msg("at function [cveAddBodyWorld2D()] : invalid broadphase type.");
+ 	break;
+ }
 }
+
+
+
+/*
+ static functions
+*/
+static void __cve_bruite_force(void* ptr) {
+	CVE_World2D_Internal* world2d = (CVE_World2D_Internal*)ptr;
+	CVE_Body2D *node, *node1;
+	node = world2d->body_begin;
+
+ while(node != NULL) {
+  node1 = (CVE_Body2D*)node->components.next;
+  while(node1 != NULL) {
+
+   CVE_Manifold2D manifold;
+    
+   CVE_Body2D *aa = node;
+   CVE_Body2D *bb = node1;
+   	
+  	if((aa != bb)) {
+    __cve_collide2d(aa, bb, &manifold);
+    if(manifold.collide) {
+     __cve_collision_handle_resolve(&manifold);
+     __cve_collision_handle_impulse(&manifold);
+   }
+ 	}
+   	
+  node1 = (CVE_Body2D*)node1->components.next;
+ }
+	node = (CVE_Body2D*)node->components.next;
+ }
+}
+
 
 

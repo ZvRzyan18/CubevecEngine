@@ -29,8 +29,8 @@ void __cve_sweep_and_prune2d_add_body(CVE_SweepAndPrune2D *obj, CVE_Body2D *body
 void __cve_sweep_and_prune2d_remove_body(CVE_SweepAndPrune2D *obj, CVE_Body2D *body);
 
 
-void __cve_sweep_and_prun2d_broadphase_x(CVE_SweepAndPrune2D *obj);
-void __cve_sweep_and_prun2d_broadphase_y(CVE_SweepAndPrune2D *obj);
+void __cve_sweep_and_prune2d_broadphase_x(void *world);
+void __cve_sweep_and_prune2d_broadphase_y(void *world);
 
 
 #endif

@@ -94,14 +94,14 @@ void __cve_collision_handle_resolve(CVE_Manifold2D *manifold) {
 
 }
 
-extern void draw_point(float x, float y);
 
 void __cve_collision_handle_impulse(CVE_Manifold2D *manifold) {
 /*
  CVE_Float dp, inv_masses, e, j;
 
  CVE_Vec2f	relative_velocity, impulse, vec_j, inv_mass, apply_impulse;
-
+ CVE_Uint i;
+ for(i = 0; i < manifold->contact_size; i++) {
  CVE_Sub2f(relative_velocity, manifold->b->components.velocity, manifold->a->components.velocity);
  CVE_Dot2f(dp, relative_velocity, manifold->direction);
  
@@ -111,6 +111,7 @@ void __cve_collision_handle_impulse(CVE_Manifold2D *manifold) {
  inv_masses = (manifold->a->components.inv_mass + manifold->b->components.inv_mass);
  CVE_Min(e, manifold->a->components.restitution, manifold->b->components.restitution);
  j = (-(1.0 + e) * dp) / inv_masses;
+	j /= (CVE_Float)manifold->contact_size;
 	CVE_ScalarToVector2f(vec_j, j);
  CVE_Mul2f(impulse, vec_j, manifold->direction);
  
@@ -122,12 +123,8 @@ void __cve_collision_handle_impulse(CVE_Manifold2D *manifold) {
  CVE_ScalarToVector2f(inv_mass, manifold->b->components.inv_mass);
 	CVE_Mul2f(apply_impulse, impulse, inv_mass);
 	CVE_Add2f(manifold->b->components.velocity, manifold->b->components.velocity, apply_impulse);
-
+ }
 */
-
- for(int i = 0; i < manifold->contact_size; i++)
-  draw_point(manifold->contact[i].x / 100.0, manifold->contact[i].y / 100.0);
-
 
  CVE_Float dp[2], inv_masses, e, j, j_pos,
   ra_perp_dp, rb_perp_dp, impulse_scalar;
@@ -143,8 +140,8 @@ void __cve_collision_handle_impulse(CVE_Manifold2D *manifold) {
  
  CVE_Float contact_impulse[2];
  
-
- for(CVE_Uint i = 0; i < manifold->contact_size; i++) {
+ CVE_Uint i;
+ for(i = 0; i < manifold->contact_size; i++) {
  
  	CVE_Sub2f(ra, a->components.centroid, manifold->contact[i]);
   CVE_Sub2f(rb, b->components.centroid, manifold->contact[i]);
@@ -180,33 +177,32 @@ void __cve_collision_handle_impulse(CVE_Manifold2D *manifold) {
   CVE_Min(e, a->components.restitution, b->components.restitution);
   j = (-(1.0 + e) * dp[i]) / inv_masses;
   j /= (CVE_Float)manifold->contact_size;
-
+  
   contact_impulse[i] = j;
   
  	CVE_ScalarToVector2f(vec_j, j);
   CVE_Mul2f(impulse, vec_j, manifold->direction);
 
 
-
   CVE_ScalarToVector2f(inv_mass, a->components.inv_mass);
  	CVE_Mul2f(apply_impulse, impulse, inv_mass);
  	CVE_Sub2f(a->components.velocity, a->components.velocity, apply_impulse);
-	
+ 
   CVE_ScalarToVector2f(inv_mass, b->components.inv_mass);
  	CVE_Mul2f(apply_impulse, impulse, inv_mass);
 	 CVE_Add2f(b->components.velocity, b->components.velocity, apply_impulse);
- 
- 
  
   CVE_Float rot_impulse;
   CVE_Cross2f(impulse_scalar, ra, impulse);
   rot_impulse = impulse_scalar * a->components.inv_rotational_inertia;
   a->components.omega -= rot_impulse;
- 
+  
   CVE_Cross2f(impulse_scalar, rb, impulse);
   rot_impulse = impulse_scalar * b->components.inv_rotational_inertia;
   b->components.omega += rot_impulse;
+  
  }
+
 
 /*
  friction
@@ -215,8 +211,7 @@ void __cve_collision_handle_impulse(CVE_Manifold2D *manifold) {
  CVE_Vec2f tangent, dp_vec, normal_dp, friction_vec;
  const CVE_Float friction = (a->components.friction + b->components.friction) * 0.5;
 
- 
- for(CVE_Uint i = 0; i < manifold->contact_size; i++) {
+ for(i = 0; i < manifold->contact_size; i++) {
 
   CVE_ScalarToVector2f(dp_vec, dp[i]);
   CVE_Mul2f(normal_dp, dp_vec, manifold->direction);
@@ -257,21 +252,20 @@ void __cve_collision_handle_impulse(CVE_Manifold2D *manifold) {
    CVE_Mul2f(impulse, impulse, friction_vec);
   }
 
-
   CVE_ScalarToVector2f(inv_mass, a->components.inv_mass);
  	CVE_Mul2f(apply_impulse, impulse, inv_mass);
  	CVE_Sub2f(a->components.velocity, a->components.velocity, apply_impulse);
-	
+  
   CVE_ScalarToVector2f(inv_mass, b->components.inv_mass);
  	CVE_Mul2f(apply_impulse, impulse, inv_mass);
 	 CVE_Add2f(b->components.velocity, b->components.velocity, apply_impulse);
- 
- 
+  
   CVE_Float rot_impulse;
+
   CVE_Cross2f(impulse_scalar, ra, impulse);
   rot_impulse = impulse_scalar * a->components.inv_rotational_inertia;
   a->components.omega -= rot_impulse;
- 
+  
   CVE_Cross2f(impulse_scalar, rb, impulse);
   rot_impulse = impulse_scalar * b->components.inv_rotational_inertia;
   b->components.omega += rot_impulse;

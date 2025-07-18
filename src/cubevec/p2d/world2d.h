@@ -9,6 +9,8 @@
 #include "cubevec/core.h"
 #include "cubevec/math/math.h"
 #include "cubevec/p2d/body_pool2d.h"
+#include "cubevec/p2d/sweep_and_prune2d.h"
+
 
 /*********************************************
  *
@@ -23,7 +25,11 @@ typedef struct {
 	CVE_Float*  iteration_reciprocal;
 	
 	CVE_BodyPool2D_Internal body_pool;
-	CVE_Handle* collision_pipeline;
+	
+	CVE_SweepAndPrune2D sweep_and_prune;
+	CVE_Uint broadphase_type;
+	
+	void (*broadphase)(void* world);
 	
 	CVE_Body2D *body_begin;
 	CVE_Body2D *body_end;

@@ -16,12 +16,12 @@ extern CVE_ErrorHandler __cve_global_error_handler;
  *
  *********************************************/
 
-static void CVE_Update_Nothing(void* self, CVE_Float time);
+static void CVE_Update_Nothing(void* self, CVE_Float time, CVE_Vec2f gravity);
 
-static void CVE_Update_RectBody2D_Dynamic(CVE_RectBody2D* self, CVE_Float time);
-static void CVE_Update_CircleBody2D_Dynamic(CVE_CircleBody2D* self, CVE_Float time);
-static void CVE_Update_TriangleBody2D_Dynamic(CVE_TriangleBody2D* self, CVE_Float time);
-static void CVE_Update_ConvexBody2D_Dynamic(CVE_ConvexBody2D* self, CVE_Float time);
+static void CVE_Update_RectBody2D_Dynamic(CVE_RectBody2D* self, CVE_Float time, CVE_Vec2f gravity);
+static void CVE_Update_CircleBody2D_Dynamic(CVE_CircleBody2D* self, CVE_Float time, CVE_Vec2f gravity);
+static void CVE_Update_TriangleBody2D_Dynamic(CVE_TriangleBody2D* self, CVE_Float time, CVE_Vec2f gravity);
+static void CVE_Update_ConvexBody2D_Dynamic(CVE_ConvexBody2D* self, CVE_Float time, CVE_Vec2f gravity);
 
 
 static void CVE_Init_RectBody2D(CVE_RectBody2D* rect_body);
@@ -174,7 +174,7 @@ static void CVE_Init_RectBody2D(CVE_RectBody2D* self) {
  self->transformed_vertices[3].y = -half_height;
 
  self->components.centroid = self->components.position;
- 
+  
  CVE_Vec2f aa, bb;
  CVE_Float s, c;
  CVE_SinCos(self->components.rotation, s, c);
@@ -183,7 +183,9 @@ static void CVE_Init_RectBody2D(CVE_RectBody2D* self) {
  aa.y = s;
  bb.x = -s;
  bb.y = c;
- for(CVE_Uint i = 0; i < 4; i++) {
+ 
+ CVE_Uint i;
+ for(i = 0; i < 4; i++) {
  	CVE_Vec2f xx, yy, tmp;
  	xx.x = self->transformed_vertices[i].x;
  	xx.y = self->transformed_vertices[i].x;
@@ -200,7 +202,7 @@ static void CVE_Init_RectBody2D(CVE_RectBody2D* self) {
   CVE_Max2f(self->components.aabb[1], self->components.aabb[1], self->transformed_vertices[i]);
  }
  
- for(CVE_Uint i = 0; i < 4; i++) {
+ for(i = 0; i < 4; i++) {
   CVE_Vec2f p1 = self->transformed_vertices[i];
   CVE_Vec2f p2 = self->transformed_vertices[(i+1)%4];
   
@@ -231,7 +233,7 @@ static void CVE_Init_CircleBody2D(CVE_CircleBody2D* self) {
   self->components.rotational_inertia = 0;
   self->components.inv_rotational_inertia = 0;
  }
- 
+  
  self->components.centroid = self->components.position;
  
  CVE_Vec2f vec_radius, pos_a, pos_b;
@@ -263,21 +265,31 @@ static void CVE_Init_ConvexBody2D(CVE_ConvexBody2D* convex_body) {
  *********************************************/
 
 
-static void CVE_Update_Nothing(void* self, CVE_Float time) {
+static void CVE_Update_Nothing(void* self, CVE_Float time, CVE_Vec2f gravity) {
 	/* do nothing */
 }
 
 
 
-static void CVE_Update_RectBody2D_Dynamic(CVE_RectBody2D* self, CVE_Float time) {
+static void CVE_Update_RectBody2D_Dynamic(CVE_RectBody2D* self, CVE_Float time, CVE_Vec2f gravity) {
 
  CVE_Vec2f time_vec;
  
  CVE_ScalarToVector2f(time_vec, time);
  
  /* force and torque */ 
- CVE_Fma2f(self->components.velocity, self->components.force, time_vec, self->components.velocity);
- CVE_Fma(self->components.omega, self->components.torque, time, self->components.omega);
+ CVE_Vec2f linear_acceleration, inv_mass;
+ CVE_Float angular_accelertaion;
+ 
+ CVE_ScalarToVector2f(inv_mass, self->components.inv_mass);
+ CVE_Fma2f(linear_acceleration, self->components.force, inv_mass, gravity);
+
+
+ angular_accelertaion = self->components.torque * self->components.inv_rotational_inertia;
+ 
+ CVE_Fma2f(self->components.velocity, linear_acceleration, time_vec, self->components.velocity);
+ CVE_Fma(self->components.omega, angular_accelertaion, time, self->components.omega);
+
 
  CVE_Fma2f(self->components.position, self->components.velocity, time_vec, self->components.position);
  CVE_Fma(self->components.rotation, self->components.omega, time, self->components.rotation);
@@ -285,7 +297,10 @@ static void CVE_Update_RectBody2D_Dynamic(CVE_RectBody2D* self, CVE_Float time) 
  CVE_ScalarToVector2f(self->components.force, 0);
  self->components.torque = 0;
 
- 
+ CVE_WrapAngle(self->components.rotation, self->components.rotation); 
+
+
+
 /*
  calculate vertices
 */
@@ -315,7 +330,9 @@ static void CVE_Update_RectBody2D_Dynamic(CVE_RectBody2D* self, CVE_Float time) 
  aa.y = s;
  bb.x = s;
  bb.y = c;
- for(CVE_Uint i = 0; i < 4; i++) {
+ 
+ CVE_Uint i;
+ for(i = 0; i < 4; i++) {
  	CVE_Vec2f xx, yy, tmp;
  	xx.x = self->transformed_vertices[i].x;
  	xx.y = self->transformed_vertices[i].x;
@@ -332,7 +349,7 @@ static void CVE_Update_RectBody2D_Dynamic(CVE_RectBody2D* self, CVE_Float time) 
   CVE_Max2f(self->components.aabb[1], self->components.aabb[1], self->transformed_vertices[i]);
  }
  
- for(CVE_Uint i = 0; i < 4; i++) {
+ for(i = 0; i < 4; i++) {
   CVE_Vec2f p1 = self->transformed_vertices[i];
   CVE_Vec2f p2 = self->transformed_vertices[(i+1)%4];
   
@@ -346,20 +363,30 @@ static void CVE_Update_RectBody2D_Dynamic(CVE_RectBody2D* self, CVE_Float time) 
 }
 
 
-static void CVE_Update_CircleBody2D_Dynamic(CVE_CircleBody2D* self, CVE_Float time) {
- CVE_Vec2f time_vec; 
+static void CVE_Update_CircleBody2D_Dynamic(CVE_CircleBody2D* self, CVE_Float time, CVE_Vec2f gravity) {
+ CVE_Vec2f time_vec;
+ 
  CVE_ScalarToVector2f(time_vec, time);
  
  /* force and torque */ 
- CVE_Fma2f(self->components.velocity, self->components.force, time_vec, self->components.velocity);
- CVE_Fma(self->components.omega, self->components.torque, time, self->components.omega);
+ CVE_Vec2f linear_acceleration, inv_mass;
+ CVE_Float angular_accelertaion;
+ 
+ CVE_ScalarToVector2f(inv_mass, self->components.inv_mass);
+ CVE_Fma2f(linear_acceleration, self->components.force, inv_mass, gravity);
+ 
+ angular_accelertaion = self->components.torque * self->components.inv_rotational_inertia;
+ 
+ CVE_Fma2f(self->components.velocity, linear_acceleration, time_vec, self->components.velocity);
+ CVE_Fma(self->components.omega, angular_accelertaion, time, self->components.omega);
 
  CVE_Fma2f(self->components.position, self->components.velocity, time_vec, self->components.position);
  CVE_Fma(self->components.rotation, self->components.omega, time, self->components.rotation);
 
-
  CVE_ScalarToVector2f(self->components.force, 0);
  self->components.torque = 0;
+
+ CVE_WrapAngle(self->components.rotation, self->components.rotation); 
 
  /*
   recalculate its components
@@ -377,12 +404,12 @@ static void CVE_Update_CircleBody2D_Dynamic(CVE_CircleBody2D* self, CVE_Float ti
 }
 
 
-static void CVE_Update_TriangleBody2D_Dynamic(CVE_TriangleBody2D* self, CVE_Float time) {
+static void CVE_Update_TriangleBody2D_Dynamic(CVE_TriangleBody2D* self, CVE_Float time, CVE_Vec2f gravity) {
 	
 }
 
 
-static void CVE_Update_ConvexBody2D_Dynamic(CVE_ConvexBody2D* self, CVE_Float time) {
+static void CVE_Update_ConvexBody2D_Dynamic(CVE_ConvexBody2D* self, CVE_Float time, CVE_Vec2f gravity) {
 	
 }
 
@@ -396,24 +423,53 @@ static void CVE_Update_ConvexBody2D_Dynamic(CVE_ConvexBody2D* self, CVE_Float ti
  *********************************************/
 
 
-void cveGetPositionBody2D(CVE_BodyHandle2D body_handle, CVE_Handle out_ptr) {
+CVE_API void cveGetPositionBody2D(CVE_BodyHandle2D body_handle, CVE_Handle out_ptr) {
 	*((CVE_Vec2f*)out_ptr) = ((CVE_Body2D*)body_handle)->components.position;
 }
 
 
-void cveSetPositionBody2D(CVE_BodyHandle2D body_handle, CVE_Handle in_ptr) {
+CVE_API void cveSetPositionBody2D(CVE_BodyHandle2D body_handle, CVE_Handle in_ptr) {
 	CVE_Vec2f *pos = (CVE_Vec2f*)in_ptr;
 	((CVE_Body2D*)body_handle)->components.position = *pos;
 }
 
-void cveGetRotationBody2D(CVE_BodyHandle2D body_handle, CVE_Handle out_ptr) {
+CVE_API void cveGetRotationBody2D(CVE_BodyHandle2D body_handle, CVE_Handle out_ptr) {
 	*((CVE_Float*)out_ptr) = ((CVE_Body2D*)body_handle)->components.rotation;
 }
 
 
-void cveSetRotationBody2D(CVE_BodyHandle2D body_handle, CVE_Handle in_ptr) {
+CVE_API void cveSetRotationBody2D(CVE_BodyHandle2D body_handle, CVE_Handle in_ptr) {
 	CVE_Float *rot = (CVE_Float*)in_ptr;
 	((CVE_Body2D*)body_handle)->components.rotation = *rot;
 }
+
+
+
+
+CVE_API void cveAddForceBody2D(CVE_BodyHandle2D body_handle, CVE_Handle in_ptr) {
+	CVE_Body2D* body = ((CVE_Body2D*)body_handle);
+	CVE_Add2f(body->components.force, body->components.force, (*(CVE_Vec2f*)in_ptr));
+}
+
+
+CVE_API void cveAddTorqueBody2D(CVE_BodyHandle2D body_handle, CVE_Handle in_ptr) {
+	CVE_Body2D* body = ((CVE_Body2D*)body_handle);
+	body->components.torque += *(CVE_Float*)in_ptr;
+}
+
+
+CVE_API void cveAddLinearImpulseBody2D(CVE_BodyHandle2D body_handle, CVE_Handle in_ptr) {
+	CVE_Body2D* body = ((CVE_Body2D*)body_handle);
+	CVE_Vec2f vec_mass;
+	CVE_ScalarToVector2f(vec_mass, body->components.inv_mass);
+	CVE_Fma2f(body->components.velocity, (*(CVE_Vec2f*)in_ptr), vec_mass, body->components.velocity);
+}
+
+
+CVE_API void cveAddRotationalImpulseBody2D(CVE_BodyHandle2D body_handle, CVE_Handle in_ptr) {
+	CVE_Body2D* body = ((CVE_Body2D*)body_handle);
+	body->components.omega += (*(CVE_Float*)in_ptr) * body->components.inv_rotational_inertia;
+}
+
 
 
