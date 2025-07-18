@@ -1,3 +1,33 @@
+# Cubevec Engine Core 0.0.3
+
+• support add force function
+
+• support add torque function
+
+• support add linear impulse function
+
+• support add rotational impulse function
+
+• add broadphase selection
+
+• support for sweep and prune broadphase
+
+• fix gravity, mass and acceleration 
+
+• add options to use std math
+
+• add f32 and f64 support
+
+• sincos implemented
+
+• tan implemented
+
+• round implemented (trunc, ceil, floor, round, lrint)
+
+• angle wrap implemented (for each bodies)
+
+• fixed bug for arm neon friction calculation
+
 # Cubevec Engine Core 0.0.2
 
 • fixed some math error
@@ -16,5 +46,6 @@
 • simple structure implemented
 
 • body 2d pool implemented
+
 
 
