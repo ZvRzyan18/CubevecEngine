@@ -9,12 +9,23 @@
 
 
 #include <float.h>
-#include <stddef.h>
+#include <math.h>
+#include <string.h>
+#include <stdlib.h>
 
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+
+#if defined(_WIN32)
+#define CVE_API __declspec(dllexport)
+#else
+#define CVE_API __attribute__((visibility("default")))
+#endif
+
+
 
 /*********************************************
  *
@@ -27,8 +38,25 @@ extern "C" {
  if the size of unsigned int and float is not equal, just change 
  the unsigned int 
 */
+
+/*macro options*/
+#define CVE_F32
+//#define CVE_USE_STD_MATH
+//#define CVE_FORCE_CPU_INSTRUCTIONS
+
+
+#if defined(CVE_F32)
 typedef float         CVE_Float;
 typedef unsigned int  CVE_Uint;
+#elif defined(CVE_F64)
+typedef double             CVE_Float;
+typedef unsigned long long CVE_Uint;
+#else
+#error please select between CVE_F32 and CVE_F64
+#endif
+
+
+typedef long          CVE_Int;
 typedef unsigned long CVE_Size;
 typedef void*         CVE_Handle;
 
@@ -42,11 +70,13 @@ typedef void*         CVE_Handle;
 
 /*
  the size of unsigned int and float must be equal
- or else it will result in compile time error
+ or else it will result in compile time error,
+ since it uses in bit manipulation tricks for approximation
+ so it should be checked 
 */
+#ifndef CVE_USE_STD_MATH
 typedef char __cve_assert_uint_size[sizeof(CVE_Uint) == sizeof(CVE_Float) ? 1 : -1];
-typedef char __cve_assert_float_size[sizeof(CVE_Float) == 4 ? 1 : -1];
-
+#endif
 
 /*
  allocator callbacks
@@ -67,12 +97,20 @@ typedef struct {
  *
  *********************************************/
 
+enum CVE_Broadphase2D {
+	CVE_BROADPHASE2D_BRUITE_FORCE = 1,
+	CVE_BROADPHASE2D_SWEEP_AND_PRUNE_X = 2,
+	CVE_BROADPHASE2D_SWEEP_AND_PRUNE_Y = 3,
+};
+
+
 enum CVE_Body2DTypes {
 	CVE_BODY2D_TYPE_RECT = 1,
 	CVE_BODY2D_TYPE_CIRCLE = 2,
 	CVE_BODY2D_TYPE_TRIANGLE = 3,
 	CVE_BODY2D_TYPE_CONVEX = 4,
 };
+
 
 enum CVE_BodyMovement2DTypes {
 	CVE_BODY_MOVEMENT2D_TYPES_DYNAMIC = 1,
@@ -138,20 +176,20 @@ typedef CVE_Handle CVE_BodyPool2D;
  *
  *********************************************/
 
-void cveSetGlobalAllocator(CVE_Allocator* allocator);
-void cveSetGlobalErrorHandler(CVE_ErrorHandler* handler);
+CVE_API void cveSetGlobalAllocator(CVE_Allocator* allocator);
+CVE_API void cveSetGlobalErrorHandler(CVE_ErrorHandler* handler);
 
-void cveCreateWorld2D(CVE_World2D* world);
-void cveDestroyWorld2D(CVE_World2D world);
+CVE_API void cveCreateWorld2D(CVE_World2D* world);
+CVE_API void cveDestroyWorld2D(CVE_World2D world);
 
-void cveUpdateWorld2D(CVE_World2D world, CVE_Float time);
-void cveSetGravityWorld2D(CVE_World2D world, CVE_Float* gravity);
-void cveSetIterationWorld2D(CVE_World2D world, CVE_Uint iteration);
-void cveSetEpsilonWorld2D(CVE_World2D world, CVE_Float epsilon);
+CVE_API void cveUpdateWorld2D(CVE_World2D world, CVE_Float time);
+CVE_API void cveSetGravityWorld2D(CVE_World2D world, CVE_Float* gravity);
+CVE_API void cveSetIterationWorld2D(CVE_World2D world, CVE_Uint iteration);
+CVE_API void cveSetBroadphaseTypeWorld2D(CVE_World2D world, CVE_Uint type);
 
 
-void cveAddBodyWorld2D(CVE_World2D world, CVE_BodyHandle2D* handle, CVE_Uint type, CVE_Handle ptr);
-void cveRemoveBodyWorld2D(CVE_World2D world, CVE_BodyHandle2D handle);
+CVE_API void cveAddBodyWorld2D(CVE_World2D world, CVE_BodyHandle2D* handle, CVE_Uint type, CVE_Handle ptr);
+CVE_API void cveRemoveBodyWorld2D(CVE_World2D world, CVE_BodyHandle2D handle);
 
 
 /*********************************************
@@ -160,11 +198,16 @@ void cveRemoveBodyWorld2D(CVE_World2D world, CVE_BodyHandle2D handle);
  *
  *********************************************/
 
-void cveGetPositionBody2D(CVE_BodyHandle2D body_handle, CVE_Handle out_ptr);
-void cveSetPositionBody2D(CVE_BodyHandle2D body_handle, CVE_Handle in_ptr);
-void cveGetRotationBody2D(CVE_BodyHandle2D body_handle, CVE_Handle out_ptr);
-void cveSetRotationBody2D(CVE_BodyHandle2D body_handle, CVE_Handle in_ptr);
+CVE_API void cveGetPositionBody2D(CVE_BodyHandle2D body_handle, CVE_Handle out_ptr);
+CVE_API void cveSetPositionBody2D(CVE_BodyHandle2D body_handle, CVE_Handle in_ptr);
+CVE_API void cveGetRotationBody2D(CVE_BodyHandle2D body_handle, CVE_Handle out_ptr);
+CVE_API void cveSetRotationBody2D(CVE_BodyHandle2D body_handle, CVE_Handle in_ptr);
 
+CVE_API void cveAddForceBody2D(CVE_BodyHandle2D body_handle, CVE_Handle in_ptr);
+CVE_API void cveAddTorqueBody2D(CVE_BodyHandle2D body_handle, CVE_Handle in_ptr);
+
+CVE_API void cveAddLinearImpulseBody2D(CVE_BodyHandle2D body_handle, CVE_Handle in_ptr);
+CVE_API void cveAddRotationalImpulseBody2D(CVE_BodyHandle2D body_handle, CVE_Handle in_ptr);
 
 #ifdef __cplusplus
 }
