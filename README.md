@@ -1,5 +1,5 @@
 # CubevecEngine
-2D physics engine in C
+2D/3D physics engine in C
 
 This engine is still currently unstable.
 
