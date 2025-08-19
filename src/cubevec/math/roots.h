@@ -117,5 +117,46 @@
 #endif
 
 
+
+#if defined(CVE_CPU_ARM64) && defined(CVE_F32)
+#define CVE_Sqrt4f(out, a) \
+        do { \
+         float32x4_t CVE_Sqrt_x; \
+         CVE_Neon_FromVec4f(CVE_Sqrt_x, a); \
+         CVE_Sqrt_x = vsqrtq_f32(CVE_Sqrt_x); \
+         CVE_Neon_ToVec4f(out, CVE_Sqrt_x); \
+        } while(0)
+#else
+
+#if defined(CVE_USE_STD_MATH) && defined(CVE_F32)
+#define CVE_Sqrt4f(out, a) \
+        do { \
+         out.x = sqrtf(a.x); \
+         out.y = sqrtf(a.y); \
+         out.z = sqrtf(a.z); \
+         out.w = sqrtf(a.w); \
+        } while(0)
+#elif defined(CVE_USE_STD_MATH) && defined(CVE_F64)
+#define CVE_Sqrt4f(out, a) \
+        do { \
+         out.x = sqrt(a.x); \
+         out.y = sqrt(a.y); \
+         out.z = sqrt(a.z); \
+         out.w = sqrt(a.w); \
+        } while(0)
+#else
+#define CVE_Sqrt4f(out, a) \
+        do { \
+         CVE_Sqrt(out.x, a.x); \
+         CVE_Sqrt(out.y, a.y); \
+         CVE_Sqrt(out.z, a.z); \
+         CVE_Sqrt(out.w, a.w); \
+        } while(0)
+#endif
+
+#endif
+
+
+
 #endif
 

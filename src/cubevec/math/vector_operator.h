@@ -713,9 +713,8 @@
 #else
 #define CVE_Fma2f(out, a, b, c) \
          do { \
-          CVE_Vec2f CVE_Fma2f_product; \
-          CVE_Mul2f(CVE_Fma2f_product, a, b); \
-          CVE_Add2f(out, CVE_Fma2f_product, c); \
+          out.x = a.x * b.x + c.x; \
+          out.y = a.y * b.y + c.y; \
          } while(0)
 #endif
 
@@ -750,9 +749,9 @@
 #else
 #define CVE_Fma3f(out, a, b, c) \
          do { \
-          CVE_Vec3f CVE_Fma3f_product; \
-          CVE_Mul3f(CVE_Fma3f_product, a, b); \
-          CVE_Add3f(out, CVE_Fma3f_product, c); \
+          out.x = a.x * b.x + c.x; \
+          out.y = a.y * b.y + c.y; \
+          out.z = a.z * b.z + c.z; \
          } while(0)
 #endif
 
@@ -790,9 +789,10 @@
 #else
 #define CVE_Fma4f(out, a, b, c) \
          do { \
-          CVE_Vec4f CVE_Fma4f_product; \
-          CVE_Mul4f(CVE_Fma4f_product, a, b); \
-          CVE_Add4f(out, CVE_Fma4f_product, c); \
+          out.x = a.x * b.x + c.x; \
+          out.y = a.y * b.y + c.y; \
+          out.z = a.z * b.z + c.z; \
+          out.w = a.w * b.w + c.w; \
          } while(0)
 #endif
 

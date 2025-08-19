@@ -198,7 +198,7 @@
 */
 
 #define CVE_Min(out, a, b) \
-        out = a < b ? a : b
+        out = ((a < b) ? a : b)
 
 
 #if defined(CVE_CPU_ARM64) && defined(CVE_F32)
@@ -268,7 +268,7 @@
 
 
 #define CVE_Max(out, a, b) \
-        out = a > b ? a : b
+        out = ((a > b) ? a : b)
 
 
 #if defined(CVE_CPU_ARM64) && defined(CVE_F32)

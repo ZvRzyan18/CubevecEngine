@@ -10,4 +10,6 @@
 #include "cubevec/math/common.h"
 #include "cubevec/math/round.h"
 #include "cubevec/math/trigonometry.h"
+#include "cubevec/math/exponential.h"
+#include "cubevec/math/logarithm.h"
 
