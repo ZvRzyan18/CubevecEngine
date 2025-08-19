@@ -55,7 +55,7 @@ typedef unsigned long long CVE_Uint;
 #error please select between CVE_F32 and CVE_F64
 #endif
 
-
+typedef unsigned int  CVE_Flag;
 typedef long          CVE_Int;
 typedef unsigned long CVE_Size;
 typedef void*         CVE_Handle;
@@ -113,10 +113,17 @@ enum CVE_Body2DTypes {
 
 
 enum CVE_BodyMovement2DTypes {
-	CVE_BODY_MOVEMENT2D_TYPES_DYNAMIC = 1,
-	CVE_BODY_MOVEMENT2D_TYPES_STATIC = 2,
-	CVE_BODY_MOVEMENT2D_TYPES_KINEMATIC = 3,
-}; 
+	CVE_BODY2D_MOVEMENT_TYPES_DYNAMIC = 1,
+	CVE_BODY2D_MOVEMENT_TYPES_STATIC = 2,
+	CVE_BODY2D_MOVEMENT_TYPES_KINEMATIC = 3,
+};
+
+
+enum CVE_Body2DConstraintMovement {
+	CVE_BODY2D_CONSTRAINT_MOVEMENT_TYPE_X = 0b00000001,
+	CVE_BODY2D_CONSTRAINT_MOVEMENT_TYPE_Y = 0b00000010,
+	CVE_BODY2D_CONSTRAINT_MOVEMENT_TYPE_ROTATION = 0b00000100,
+};
 
 
 typedef struct {
@@ -128,6 +135,8 @@ typedef struct {
 	CVE_Float restitution;
 	CVE_Float width, height;
 	CVE_Float friction;
+	CVE_Float linear_damping[2];
+	CVE_Float angular_damping;
 } CVE_CreateRectBody2D;
 
 typedef struct {
@@ -139,6 +148,8 @@ typedef struct {
 	CVE_Float restitution;
 	CVE_Float radius;
 	CVE_Float friction;
+	CVE_Float linear_damping[2];
+	CVE_Float angular_damping;
 } CVE_CreateCircleBody2D;
 
 typedef struct {
@@ -150,6 +161,8 @@ typedef struct {
 	CVE_Float restitution;
 	CVE_Float vertices[6];
 	CVE_Float friction;
+	CVE_Float linear_damping[2];
+	CVE_Float angular_damping;
 } CVE_CreateTriangleBody2D;
 
 typedef struct {
@@ -162,6 +175,8 @@ typedef struct {
 	CVE_Float *vertices;
 	CVE_Size  vertices_size;
 	CVE_Float friction;
+	CVE_Float linear_damping[2];
+	CVE_Float angular_damping;
 } CVE_CreateConvexBody2D;
 
 
@@ -184,7 +199,7 @@ CVE_API void cveDestroyWorld2D(CVE_World2D world);
 
 CVE_API void cveUpdateWorld2D(CVE_World2D world, CVE_Float time);
 CVE_API void cveSetGravityWorld2D(CVE_World2D world, CVE_Float* gravity);
-CVE_API void cveSetIterationWorld2D(CVE_World2D world, CVE_Uint iteration);
+CVE_API void cveSetSubstepWorld2D(CVE_World2D world, CVE_Uint substep);
 CVE_API void cveSetBroadphaseTypeWorld2D(CVE_World2D world, CVE_Uint type);
 
 
