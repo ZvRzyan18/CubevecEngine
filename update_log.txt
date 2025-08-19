@@ -1,3 +1,27 @@
+# Cubevec Engine Core 0.0.4
+
+• linear/angular damping implemented
+
+• logarithm implemented
+
+• exponential implemented
+
+• revise impulse friction
+
+• fix impulse restitution
+
+• changes in iteration to subteps
+
+• improve substeps simulation
+
+• changes in movement type constant
+
+• improved stability
+
+• improved narrophase collision (uses lookup table instead of switch)
+
+• revise code for consistency
+
 # Cubevec Engine Core 0.0.3
 
 • support add force function
