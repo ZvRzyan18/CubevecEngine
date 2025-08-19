@@ -2,7 +2,9 @@
 #define CVE_ARM64_H
 
 #include "cubevec/math/vector.h"
-#if defined(__aarch64__)
+#if defined(__aarch64__) && defined(CVE_FORCE_CPU_INSTRUCTIONS)
+
+
 #include <arm_neon.h>
 
 #define CVE_CPU_ARM64
