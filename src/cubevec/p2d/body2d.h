@@ -20,8 +20,13 @@
 
 typedef struct CVE_BodyInternalPart2D CVE_BodyInternalPart2D;
 struct CVE_BodyInternalPart2D {
-	CVE_Uint  body_type;
-	CVE_Uint  movement_type;
+	CVE_Flag  body_type;
+	CVE_Flag  movement_type;
+	CVE_Flag  constraint;
+	
+	CVE_Float is_resting;
+	CVE_Float rest_time;
+	
 
 	CVE_Vec2f position;
 	CVE_Float rotation;
@@ -37,6 +42,9 @@ struct CVE_BodyInternalPart2D {
 	CVE_Float inv_mass;
 	CVE_Float rotational_inertia;
 	CVE_Float inv_rotational_inertia;
+	
+	CVE_Vec2f logarithmic_linear_damping;
+	CVE_Float logarithmic_angular_damping;
 	
 	CVE_Float friction;
 	CVE_Vec2f aabb[2];

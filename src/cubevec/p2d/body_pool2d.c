@@ -61,6 +61,9 @@ void __cve_push_body_pool2d(CVE_BodyPool2D_Internal* body_pool) {
 
 
 void __cve_pop_body_pool2d(CVE_BodyPool2D_Internal* body_pool) {
+/*
+ TODO : revise this to remove chunk node not only at the end, but to remove node that is in the parameter
+*/
 	if(body_pool->chunk_size == 0) 
 	 return;
 
@@ -224,33 +227,6 @@ void __cve_destroy_body_pool2d(CVE_BodyPool2D_Internal* body_pool) {
 }
 
 
-/*
-void __cve_update_all_body_pool2d(CVE_BodyPool2D_Internal* body_pool, CVE_Float time, CVE_Vec2f gravity) {
-
-
-	CVE_Size i;
- CVE_BodyPool2D_Chunk *current_node;
- 
- current_node = body_pool->root_node;
-
- while(current_node != NULL) {
- 
- 	for(i = 0; i < body_pool->max_chunk_element_size; i++) {
-   
-   if(current_node->body_array[i].body_type != 0) {
-
-    CVE_Body2D *body_ptr = &current_node->body_array[i];
-    CVE_Add2f(body_ptr->components.force, body_ptr->components.force, gravity);
-    body_ptr->components.update(body_ptr, time);
-   }
-   
- 	}
- 	current_node = current_node->next;
- }
- 
- 
-}
-*/
 
 
 

@@ -18,7 +18,9 @@ extern CVE_ErrorHandler __cve_global_error_handler;
  *
  *********************************************/
 
-static void __cve_bruite_force(void* ptr);
+static void __cve_bruite_force(void* ptr, CVE_Float dt);
+
+
 
 /*
  allocate world2d object
@@ -33,7 +35,11 @@ CVE_API void cveCreateWorld2D(CVE_World2D* world) {
 	
 	CVE_World2D_Internal* world2d = (CVE_World2D_Internal*)(*world);
 	__cve_init_body_pool2d(&world2d->body_pool);
+	
+	__cve_narrowphase_table_init(&world2d->narrow_phase);
 }
+
+
 
 /*
  cleanup world2d object
@@ -44,10 +50,6 @@ CVE_API void cveDestroyWorld2D(CVE_World2D world) {
 	if(world2d == NULL)
 	 __cve_global_error_handler.error_msg("at function [cveDestroyWorld2D()] : null world2d.");
  
- 
- if(world2d->iteration > 0)
-  __cve_global_allocator.deallocate(world2d->iteration_reciprocal);
-
  switch(world2d->broadphase_type) {
  	case CVE_BROADPHASE2D_BRUITE_FORCE:
  	break;
@@ -74,12 +76,13 @@ CVE_API void cveDestroyWorld2D(CVE_World2D world) {
 CVE_API void cveUpdateWorld2D(CVE_World2D world, CVE_Float time) {
 	CVE_World2D_Internal* world2d = (CVE_World2D_Internal*)world;
 
- CVE_Float *__beg = world2d->iteration_reciprocal;
- CVE_Float *__end = world2d->iteration_reciprocal + world2d->iteration;
+ CVE_Uint step_count;
  
- while(__beg < __end) {
-  time *= *(__beg++);
- 
+ time *= world2d->inv_substep;
+ step_count = 0;
+ while(step_count < world2d->substep) {
+  step_count++;
+
  	/* update position */
  	
  	CVE_Body2D *node;
@@ -89,12 +92,13 @@ CVE_API void cveUpdateWorld2D(CVE_World2D world, CVE_Float time) {
  		node->components.update(node, time, world2d->gravity);
  		node = (CVE_Body2D*)node->components.next;
  	}
- 	
+
  	/* detect collision */
- 	world2d->broadphase(world2d);
+ 	world2d->broadphase(world2d, time);
 
  }
 }
+
 
 
 /*
@@ -114,32 +118,11 @@ CVE_API void cveSetGravityWorld2D(CVE_World2D world, CVE_Float* gravity) {
 /*
  set iteration
 */
-CVE_API void cveSetIterationWorld2D(CVE_World2D world, CVE_Uint iteration) {
+CVE_API void cveSetSubstepWorld2D(CVE_World2D world, CVE_Uint substep) {
 	CVE_World2D_Internal* world2d = (CVE_World2D_Internal*)world;
 
-	if(world2d == NULL)
-	 __cve_global_error_handler.error_msg("at function [cveSetIterationWorld2D()] : null world2d.");
-
-	if(world2d->iteration != 0) {
-	 __cve_global_allocator.deallocate(world2d->iteration_reciprocal);
-	 world2d->iteration = iteration;
-	 world2d->iteration_reciprocal = (CVE_Float*)__cve_global_allocator.allocate(world2d->iteration * sizeof(CVE_Float));
-
-	 if(world2d->iteration_reciprocal == NULL)
-	  __cve_global_error_handler.error_msg("at function [cveSetIterationWorld2D()] : allocation failed.");
-	 
-	 for(CVE_Uint i = 0; i < world2d->iteration; i++)
-		 world2d->iteration_reciprocal[i] = 1.0 / (CVE_Float)(i+1);
- } else {
-		world2d->iteration = iteration;
-		world2d->iteration_reciprocal = (CVE_Float*)__cve_global_allocator.allocate(world2d->iteration * sizeof(CVE_Float));
-		
-	 if(world2d->iteration_reciprocal == NULL)
-	  __cve_global_error_handler.error_msg("at function [cveSetIterationWorld2D()] : allocation failed.");
-
-		for(CVE_Uint i = 0; i < world2d->iteration; i++)
-		 world2d->iteration_reciprocal[i] = 1.0 / (CVE_Float)(i+1);
- }
+ world2d->substep = substep;
+ world2d->inv_substep = 1.0 / (CVE_Float)substep;
 }
 
 
@@ -205,6 +188,10 @@ CVE_API void cveAddBodyWorld2D(CVE_World2D world, CVE_BodyHandle2D* handle, CVE_
    body->rect_body.components.friction =      rect_create->friction;
    body->rect_body.shape_size.x =             rect_create->width * rect_create->pre_scale[0];
    body->rect_body.shape_size.y =             rect_create->height * rect_create->pre_scale[1];
+   
+   CVE_Log2(body->rect_body.components.logarithmic_linear_damping.x, 1.0 - rect_create->linear_damping[0]);
+   CVE_Log2(body->rect_body.components.logarithmic_linear_damping.y, 1.0 - rect_create->linear_damping[1]);
+   CVE_Log2(body->rect_body.components.logarithmic_angular_damping, 1.0 - rect_create->angular_damping);
  	break;
  	case CVE_BODY2D_TYPE_CIRCLE:
  	 circle_create = (CVE_CreateCircleBody2D*)ptr;
@@ -216,6 +203,10 @@ CVE_API void cveAddBodyWorld2D(CVE_World2D world, CVE_BodyHandle2D* handle, CVE_
    body->circle_body.components.restitution =   circle_create->restitution;
    body->circle_body.components.friction =      circle_create->friction;
    body->circle_body.radius =                   circle_create->radius * circle_create->pre_scale;
+
+   CVE_Log2(body->rect_body.components.logarithmic_linear_damping.x, 1.0 - circle_create->linear_damping[0]);
+   CVE_Log2(body->rect_body.components.logarithmic_linear_damping.y, 1.0 - circle_create->linear_damping[1]);
+   CVE_Log2(body->rect_body.components.logarithmic_angular_damping, 1.0 - circle_create->angular_damping);
  	break;
  	case CVE_BODY2D_TYPE_TRIANGLE:
  	 triangle_create = (CVE_CreateTriangleBody2D*)ptr;
@@ -311,9 +302,9 @@ CVE_API void cveRemoveBodyWorld2D(CVE_World2D world, CVE_BodyHandle2D handle) {
 
 
 /*
- static functions
+ static function
 */
-static void __cve_bruite_force(void* ptr) {
+static void __cve_bruite_force(void* ptr, CVE_Float dt) {
 	CVE_World2D_Internal* world2d = (CVE_World2D_Internal*)ptr;
 	CVE_Body2D *node, *node1;
 	node = world2d->body_begin;
@@ -328,7 +319,7 @@ static void __cve_bruite_force(void* ptr) {
    CVE_Body2D *bb = node1;
    	
   	if((aa != bb)) {
-    __cve_collide2d(aa, bb, &manifold);
+    world2d->narrow_phase.functions[aa->components.body_type][bb->components.body_type](aa, bb, &manifold);
     if(manifold.collide) {
      __cve_collision_handle_resolve(&manifold);
      __cve_collision_handle_impulse(&manifold);

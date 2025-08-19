@@ -16,7 +16,8 @@ extern CVE_ErrorHandler __cve_global_error_handler;
  *
  *********************************************/
 
-static void CVE_Update_Nothing(void* self, CVE_Float time, CVE_Vec2f gravity);
+static void CVE_Update_Sleep(CVE_Body2D* self, CVE_Float time, CVE_Vec2f gravity);
+static void CVE_Update_Nothing(CVE_Body2D* self, CVE_Float time, CVE_Vec2f gravity);
 
 static void CVE_Update_RectBody2D_Dynamic(CVE_RectBody2D* self, CVE_Float time, CVE_Vec2f gravity);
 static void CVE_Update_CircleBody2D_Dynamic(CVE_CircleBody2D* self, CVE_Float time, CVE_Vec2f gravity);
@@ -45,13 +46,15 @@ void __cve_init_body2d(CVE_Body2D* body2d) {
 		 CVE_Init_RectBody2D(&body2d->rect_body);
 		 
 		 switch(body2d->components.movement_type) {
-		 	case CVE_BODY_MOVEMENT2D_TYPES_DYNAMIC:
+		 	case CVE_BODY2D_MOVEMENT_TYPES_DYNAMIC:
 		 	 body2d->components.update = (void*)CVE_Update_RectBody2D_Dynamic;
 		 	break;
-		 	case CVE_BODY_MOVEMENT2D_TYPES_STATIC:
+		 	case CVE_BODY2D_MOVEMENT_TYPES_STATIC:
 		 	 body2d->components.update = (void*)CVE_Update_Nothing;
+		 	 body2d->components.is_resting = 1;
 		 	break;
-		 	case CVE_BODY_MOVEMENT2D_TYPES_KINEMATIC:
+		 	case CVE_BODY2D_MOVEMENT_TYPES_KINEMATIC:
+		 	 body2d->components.update = (void*)CVE_Update_Nothing;
 		 	break;
 		 	default:
 		 	 __cve_global_error_handler.error_msg("at function [__cve_init_body2d()] : invalid movement type.");
@@ -65,13 +68,15 @@ void __cve_init_body2d(CVE_Body2D* body2d) {
 		 CVE_Init_CircleBody2D(&body2d->circle_body);
 
 		 switch(body2d->components.movement_type) {
-		 	case CVE_BODY_MOVEMENT2D_TYPES_DYNAMIC:
+		 	case CVE_BODY2D_MOVEMENT_TYPES_DYNAMIC:
 		 	 body2d->components.update = (void*)CVE_Update_CircleBody2D_Dynamic;
 		 	break;
-		 	case CVE_BODY_MOVEMENT2D_TYPES_STATIC:
+		 	case CVE_BODY2D_MOVEMENT_TYPES_STATIC:
 		 	 body2d->components.update = (void*)CVE_Update_Nothing;
+		 	 body2d->components.is_resting = 1;
 		 	break;
-		 	case CVE_BODY_MOVEMENT2D_TYPES_KINEMATIC:
+		 	case CVE_BODY2D_MOVEMENT_TYPES_KINEMATIC:
+		 	 body2d->components.update = (void*)CVE_Update_Nothing;
 		 	break;
 		 	default:
 		 	 __cve_global_error_handler.error_msg("at function [__cve_init_body2d()] : invalid movement type.");
@@ -84,13 +89,15 @@ void __cve_init_body2d(CVE_Body2D* body2d) {
 		 CVE_Init_TriangleBody2D(&body2d->triangle_body);
 
 		 switch(body2d->components.movement_type) {
-		 	case CVE_BODY_MOVEMENT2D_TYPES_DYNAMIC:
+		 	case CVE_BODY2D_MOVEMENT_TYPES_DYNAMIC:
 		 	 body2d->components.update = (void*)CVE_Update_TriangleBody2D_Dynamic;
 		 	break;
-		 	case CVE_BODY_MOVEMENT2D_TYPES_STATIC:
+		 	case CVE_BODY2D_MOVEMENT_TYPES_STATIC:
 		 	 body2d->components.update = (void*)CVE_Update_Nothing;
+		 	 body2d->components.is_resting = 1;
 		 	break;
-		 	case CVE_BODY_MOVEMENT2D_TYPES_KINEMATIC:
+		 	case CVE_BODY2D_MOVEMENT_TYPES_KINEMATIC:
+		 	 body2d->components.update = (void*)CVE_Update_Nothing;
 		 	break;
 		 	default:
 		 	 __cve_global_error_handler.error_msg("at function [__cve_init_body2d()] : invalid movement type.");
@@ -103,13 +110,15 @@ void __cve_init_body2d(CVE_Body2D* body2d) {
 		 CVE_Init_ConvexBody2D(&body2d->convex_body);
 
 		 switch(body2d->components.movement_type) {
-		 	case CVE_BODY_MOVEMENT2D_TYPES_DYNAMIC:
+		 	case CVE_BODY2D_MOVEMENT_TYPES_DYNAMIC:
 		 	 body2d->components.update = (void*)CVE_Update_ConvexBody2D_Dynamic;
 		 	break;
-		 	case CVE_BODY_MOVEMENT2D_TYPES_STATIC:
+		 	case CVE_BODY2D_MOVEMENT_TYPES_STATIC:
 		 	 body2d->components.update = (void*)CVE_Update_Nothing;
+		 	 body2d->components.is_resting = 1;
 		 	break;
-		 	case CVE_BODY_MOVEMENT2D_TYPES_KINEMATIC:
+		 	case CVE_BODY2D_MOVEMENT_TYPES_KINEMATIC:
+		 	 body2d->components.update = (void*)CVE_Update_Nothing;
 		 	break;
 		 	default:
 		 	 __cve_global_error_handler.error_msg("at function [__cve_init_body2d()] : invalid movement type.");
@@ -135,7 +144,7 @@ static void CVE_Init_RectBody2D(CVE_RectBody2D* self) {
  /*
   calculate area and mass
  */ 
- if(self->components.movement_type == CVE_BODY_MOVEMENT2D_TYPES_DYNAMIC) {
+ if(self->components.movement_type == CVE_BODY2D_MOVEMENT_TYPES_DYNAMIC) {
   self->components.area = self->shape_size.x * self->shape_size.y;
   self->components.mass = self->components.area * self->components.density;
   self->components.inv_mass = 1.0 / self->components.mass;
@@ -220,7 +229,7 @@ static void CVE_Init_CircleBody2D(CVE_CircleBody2D* self) {
  /*
   calculate area and mass
  */ 
- if(self->components.movement_type == CVE_BODY_MOVEMENT2D_TYPES_DYNAMIC) {
+ if(self->components.movement_type == CVE_BODY2D_MOVEMENT_TYPES_DYNAMIC) {
   self->components.area = self->radius * self->radius * CVE_PI_FLOAT;
   self->components.mass = self->components.area * self->components.density;
   self->components.inv_mass = 1.0 / self->components.mass;
@@ -264,15 +273,82 @@ static void CVE_Init_ConvexBody2D(CVE_ConvexBody2D* convex_body) {
  *
  *********************************************/
 
+static void CVE_Update_Sleep(CVE_Body2D* self, CVE_Float time, CVE_Vec2f gravity) {
+/*
+ CVE_Vec2f velocity_damping;
+ CVE_Float omega_damping;
+ CVE_Exp2(velocity_damping.x, time * self->components.logarithmic_linear_damping.x);
+ CVE_Exp2(velocity_damping.y, time * self->components.logarithmic_linear_damping.y);
+ CVE_Exp2(omega_damping, time * self->components.logarithmic_angular_damping);
 
-static void CVE_Update_Nothing(void* self, CVE_Float time, CVE_Vec2f gravity) {
+ CVE_Mul2f(self->components.velocity, self->components.velocity, velocity_damping);
+ self->components.omega *= omega_damping;
+*/
+#define SLEEP_ROT_THRESHOLD 1e-3
+#define SLEEP_POS_THRESHOLD 1e-3
+
+ if(!self->components.is_resting) {
+  self->components.update = (void*)CVE_Update_RectBody2D_Dynamic;  
+  CVE_ScalarToVector2f(self->components.velocity, 0);
+  self->components.omega = 0;
+  self->components.update(self, time, gravity);
+  return;
+ }
+ 
+ if(
+  (fabsf(self->components.velocity.x) > SLEEP_POS_THRESHOLD) || (fabsf(self->components.velocity.y) > SLEEP_POS_THRESHOLD) || (fabsf(self->components.omega) > SLEEP_ROT_THRESHOLD)
+  || (fabsf(self->components.force.x) > SLEEP_POS_THRESHOLD) || (fabsf(self->components.force.y) > SLEEP_POS_THRESHOLD) || (fabsf(self->components.torque) > SLEEP_ROT_THRESHOLD)
+  || (!self->components.is_resting)) {
+  self->components.update = (void*)CVE_Update_RectBody2D_Dynamic;
+  self->components.is_resting = 0;
+  
+  CVE_ScalarToVector2f(self->components.velocity, 0);
+  self->components.omega = 0;
+  self->components.update(self, time, gravity);
+  return;
+ } 
+
+ CVE_Vec2f time_vec;
+ 
+ CVE_ScalarToVector2f(time_vec, time);
+ CVE_Fma2f(self->components.velocity, gravity, time_vec, self->components.velocity);
+ 
+}
+
+
+static void CVE_Update_Nothing(CVE_Body2D* self, CVE_Float time, CVE_Vec2f gravity) {
 	/* do nothing */
+	self->components.is_resting = 1;
 }
 
 
 
 static void CVE_Update_RectBody2D_Dynamic(CVE_RectBody2D* self, CVE_Float time, CVE_Vec2f gravity) {
+/*
+#define ROT_THRESHOLD 1.2
+#define POS_THRESHOLD 1.3
 
+ if(self->components.is_resting) {
+  self->components.update = (void*)CVE_Update_Sleep;
+  self->components.rest_time = 0.0;
+  CVE_ScalarToVector2f(self->components.velocity, 0);
+  self->components.omega = 0;
+  return;
+ }
+ 
+ if(
+ ((fabsf(self->components.velocity.x) < POS_THRESHOLD) && (fabsf(self->components.velocity.y) < POS_THRESHOLD) && (fabsf(self->components.omega) < ROT_THRESHOLD))
+ ) {
+ 	self->components.rest_time += time;
+ 
+ 	if(self->components.rest_time >= 1.23) {
+ 	 self->components.update = (void*)CVE_Update_Sleep;
+ 	 self->components.is_resting = 1;
+ 	 self->components.rest_time = 0.0;
+ 	}
+ } else
+  self->components.rest_time = 0.0;
+*/
  CVE_Vec2f time_vec;
  
  CVE_ScalarToVector2f(time_vec, time);
@@ -291,6 +367,16 @@ static void CVE_Update_RectBody2D_Dynamic(CVE_RectBody2D* self, CVE_Float time, 
  CVE_Fma(self->components.omega, angular_accelertaion, time, self->components.omega);
 
 
+ CVE_Vec2f velocity_damping;
+ CVE_Float omega_damping;
+ CVE_Exp2(velocity_damping.x, time * self->components.logarithmic_linear_damping.x);
+ CVE_Exp2(velocity_damping.y, time * self->components.logarithmic_linear_damping.y);
+ CVE_Exp2(omega_damping, time * self->components.logarithmic_angular_damping);
+
+ CVE_Mul2f(self->components.velocity, self->components.velocity, velocity_damping);
+ self->components.omega *= omega_damping;
+
+
  CVE_Fma2f(self->components.position, self->components.velocity, time_vec, self->components.position);
  CVE_Fma(self->components.rotation, self->components.omega, time, self->components.rotation);
 
@@ -298,8 +384,6 @@ static void CVE_Update_RectBody2D_Dynamic(CVE_RectBody2D* self, CVE_Float time, 
  self->components.torque = 0;
 
  CVE_WrapAngle(self->components.rotation, self->components.rotation); 
-
-
 
 /*
  calculate vertices
@@ -364,6 +448,17 @@ static void CVE_Update_RectBody2D_Dynamic(CVE_RectBody2D* self, CVE_Float time, 
 
 
 static void CVE_Update_CircleBody2D_Dynamic(CVE_CircleBody2D* self, CVE_Float time, CVE_Vec2f gravity) {
+
+ CVE_Vec2f velocity_damping;
+ CVE_Float omega_damping;
+ CVE_Exp2(velocity_damping.x, time * self->components.logarithmic_linear_damping.x);
+ CVE_Exp2(velocity_damping.y, time * self->components.logarithmic_linear_damping.y);
+ CVE_Exp2(omega_damping, time * self->components.logarithmic_angular_damping);
+
+ CVE_Mul2f(self->components.velocity, self->components.velocity, velocity_damping);
+ self->components.omega *= omega_damping;
+
+
  CVE_Vec2f time_vec;
  
  CVE_ScalarToVector2f(time_vec, time);

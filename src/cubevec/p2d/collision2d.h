@@ -8,6 +8,8 @@
 
 #include "cubevec/p2d/body2d.h"
 
+#define CVE_MAX_BODY2D_TYPE 4
+
 
 typedef struct {
  CVE_Body2D *a, *b;
@@ -18,44 +20,18 @@ typedef struct {
 	CVE_Size   contact_size;
 } CVE_Manifold2D;
 
+typedef void (*CVE_CollisionDetect)(CVE_Body2D *a, CVE_Body2D *b, CVE_Manifold2D *manifold);
 
-void __cve_collide_convex_vs_convex2d(CVE_Body2D *a, CVE_Body2D *b, 
-        CVE_Vec2f* a_vertices, CVE_Vec2f* a_normals, CVE_Size a_vertices_size, 
-        CVE_Vec2f* b_vertices, CVE_Vec2f* b_normals, CVE_Size b_vertices_size,
-        CVE_Manifold2D *manifold
-        );
+typedef struct {
+	CVE_CollisionDetect functions[CVE_MAX_BODY2D_TYPE+1][CVE_MAX_BODY2D_TYPE+1];
+} CVE_NarrowphaseTable;
 
-void __cve_collide_convex_vs_circle2d(CVE_Body2D *a, CVE_Body2D *b,
-        CVE_Vec2f* a_vertices, CVE_Vec2f* a_normals, CVE_Size a_vertices_size, 
-        CVE_Float b_radius,
-        CVE_Manifold2D *manifold
-       );
+/*
+ lookup table function pointers 
+ usage : table->functions[a->components.type-1][b->componemts.type-1](a, b, &manifold);
+*/
+void __cve_narrowphase_table_init(CVE_NarrowphaseTable *table);
 
-void __cve_collide_circle_vs_circle2d(CVE_Body2D *a, CVE_Body2D *b,
-        CVE_Float a_radius,
-        CVE_Float b_radius,
-        CVE_Manifold2D *manifold
-       );
-
-void __cve_collide_convex_vs_convex2d_contact(CVE_Body2D *a, CVE_Body2D *b, 
-        CVE_Vec2f* a_vertices, CVE_Size a_vertices_size, 
-        CVE_Vec2f* b_vertices, CVE_Size b_vertices_size,
-        CVE_Manifold2D *manifold
-        );
-
-void __cve_collide_convex_vs_circle2d_contact(CVE_Body2D *a, CVE_Body2D *b,
-        CVE_Vec2f* a_vertices, CVE_Size a_vertices_size, 
-        CVE_Float b_radius,
-        CVE_Manifold2D *manifold
-       );
-
-void __cve_collide_circle_vs_circle2d_contact(CVE_Body2D *a, CVE_Body2D *b,
-        CVE_Float a_radius,
-        CVE_Float b_radius,
-        CVE_Manifold2D *manifold
-       );
-
-void __cve_collide2d(CVE_Body2D *a, CVE_Body2D *b, CVE_Manifold2D *manifold);
 
 #endif
 
